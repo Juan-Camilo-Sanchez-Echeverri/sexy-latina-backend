@@ -18,6 +18,8 @@ interface EnvVars {
   PORT: number;
   NODE_ENV: ExecModes;
 
+  DB_URL: string;
+
   ALLOWED_ORIGINS: string[];
 }
 
@@ -31,11 +33,7 @@ const envSchema = joi
 
     DB_URL: joi.string().required(),
 
-    JWT_SECRET: joi.string().required(),
-    JWT_EXPIRATION: joi.string().required(),
-
     ALLOWED_ORIGINS: joi.array().items(joi.string().uri()).required(),
-    DISCORD_WEBHOOK_URL: joi.string().uri().required(),
   })
   .unknown(true);
 
@@ -56,6 +54,8 @@ const envVars: EnvVars = value;
 export const envs = {
   port: envVars.PORT,
   nodeEnv,
+
+  dbUrl: envVars.DB_URL,
 
   allowedOrigins: envVars.ALLOWED_ORIGINS,
 };
