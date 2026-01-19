@@ -8,7 +8,7 @@ import {
 
 const swaggerConfig = new DocumentBuilder()
   .setTitle('API Piemce')
-  .setDescription('The API for the Piemce project')
+  .setDescription('The API for Erotic Site application')
   .setVersion('1.0.0')
   .addGlobalResponse({
     status: 500,
