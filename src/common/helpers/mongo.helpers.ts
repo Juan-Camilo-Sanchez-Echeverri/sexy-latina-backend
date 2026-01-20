@@ -26,7 +26,16 @@ export function validateMongo<T>(
 
       const message = `There is already a registry with the same ${duplicatedKey} : ${duplicatedValue}`;
 
-      return next(new ConflictException(message));
+      return next(
+        new ConflictException({
+          details: [
+            {
+              property: duplicatedKey,
+              errors: [message],
+            },
+          ],
+        }),
+      );
     }
 
     if (error.name === 'ValidationError') {
