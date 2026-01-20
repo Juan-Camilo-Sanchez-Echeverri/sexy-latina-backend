@@ -15,9 +15,38 @@ const swaggerConfig = new DocumentBuilder()
     description: 'Internal Server Error',
     schema: {
       type: 'object',
-      properties: { code: { type: 'null' }, message: { type: 'string' } },
+      properties: {
+        error: { type: 'string' },
+        code: { type: 'number' },
+        status: { type: 'number' },
+        path: { type: 'string' },
+        details: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              property: { type: 'string' },
+              errors: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+            },
+          },
+        },
+      },
     },
-    example: { code: null, message: 'Internal Server Error' },
+    example: {
+      error: '',
+      code: null,
+      status: 500,
+      path: '/api/v1.0/users',
+      details: [
+        {
+          property: null,
+          errors: ['Internal server error'],
+        },
+      ],
+    },
   })
   .addBearerAuth()
   .build();
