@@ -77,8 +77,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private extractErrors(response: string | object): ErrorsResponse['details'] {
-    if (typeof response === 'object' && 'errors' in response) {
-      return response.errors as ErrorsResponse['details'];
+    if (typeof response === 'object' && 'details' in response) {
+      return response.details as ErrorsResponse['details'];
     }
 
     let message: string;
