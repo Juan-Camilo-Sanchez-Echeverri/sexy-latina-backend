@@ -1,7 +1,9 @@
 import { ValidationErrorItem } from '../interfaces/validation-error.interface';
 
 export class ErrorsResponse {
-  message: string;
+  error: string;
   code: number | null = null;
-  errors?: ValidationErrorItem[] = [];
+  path: string;
+  status: number;
+  details: ValidationErrorItem[] = [];
 }

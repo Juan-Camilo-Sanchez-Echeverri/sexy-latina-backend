@@ -1,14 +1,18 @@
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 
 import { Module } from '@nestjs/common';
 
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { ThrottlerModule, ThrottlerGuard, seconds } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule, seconds } from '@nestjs/throttler';
 
 import { MongooseConfigService } from '@configs';
 
 import { ParseMongoIdPipe } from '@common/pipes';
+
+import { HttpExceptionFilter } from '@common/filters';
+
+import { CommonModule } from '@common/common.module';
 
 @Module({
   imports: [
@@ -23,10 +27,12 @@ import { ParseMongoIdPipe } from '@common/pipes';
       ],
       errorMessage: 'Too many requests, please try again later.',
     }),
+    CommonModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_PIPE, useClass: ParseMongoIdPipe },
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
   ],
 })
 export class AppModule {}

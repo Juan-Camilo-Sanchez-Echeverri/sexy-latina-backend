@@ -1,4 +1,4 @@
 export interface ValidationErrorItem {
-  property: string;
+  property: string | null;
   errors: string[];
 }
