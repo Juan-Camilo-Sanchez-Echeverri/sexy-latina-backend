@@ -14,6 +14,8 @@ import { HttpExceptionFilter } from '@common/filters';
 
 import { CommonModule } from '@common/common.module';
 
+import { UsersModule } from '@modules/users/users.module';
+
 @Module({
   imports: [
     // Módulos comunes globales
@@ -28,6 +30,9 @@ import { CommonModule } from '@common/common.module';
       errorMessage: 'Too many requests, please try again later.',
     }),
     CommonModule,
+
+    //Business modules
+    UsersModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
