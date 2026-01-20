@@ -66,9 +66,9 @@ async function bootstrap(): Promise<void> {
       transform: true,
       exceptionFactory: (validationErrors): UnprocessableEntityException => {
         const message = 'Validation failed';
-        const errors = getClassValidatorErrors(validationErrors);
+        const details = getClassValidatorErrors(validationErrors);
 
-        return new UnprocessableEntityException({ message, errors });
+        return new UnprocessableEntityException({ message, details });
       },
     }),
   );
