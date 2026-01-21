@@ -19,9 +19,13 @@ interface EnvVars {
   NODE_ENV: ExecModes;
 
   DB_URL: string;
-
+  APP_URL: string;
+  FRONT_PUBLIC_URL: string;
   ALLOWED_ORIGINS: string[];
   DISCORD_WEBHOOK_URL: string;
+
+  USER_NOTIFICATIONS: string;
+  PASSWORD_NOTIFICATIONS: string;
 }
 
 const envSchema = joi
@@ -33,9 +37,13 @@ const envSchema = joi
       .default(ExecModes.LOCAL),
 
     DB_URL: joi.string().required(),
-
-    ALLOWED_ORIGINS: joi.array().items(joi.string().uri()).required(),
     DISCORD_WEBHOOK_URL: joi.string().uri().required(),
+    APP_URL: joi.string().uri().required(),
+    FRONT_PUBLIC_URL: joi.string().uri().required(),
+    ALLOWED_ORIGINS: joi.array().items(joi.string().uri()).required(),
+
+    USER_NOTIFICATIONS: joi.string().required(),
+    PASSWORD_NOTIFICATIONS: joi.string().required(),
   })
   .unknown(true);
 
@@ -58,7 +66,11 @@ export const envs = {
   nodeEnv,
 
   dbUrl: envVars.DB_URL,
-
-  allowedOrigins: envVars.ALLOWED_ORIGINS,
   discordWebhookUrl: envVars.DISCORD_WEBHOOK_URL,
+  appUrl: envVars.APP_URL,
+  frontPublicUrl: envVars.FRONT_PUBLIC_URL,
+  allowedOrigins: envVars.ALLOWED_ORIGINS,
+
+  userNotifications: envVars.USER_NOTIFICATIONS,
+  passwordNotifications: envVars.PASSWORD_NOTIFICATIONS,
 };

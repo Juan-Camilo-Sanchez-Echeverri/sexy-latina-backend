@@ -15,6 +15,7 @@ import { HttpExceptionFilter } from '@common/filters';
 import { CommonModule } from '@common/common.module';
 
 import { UsersModule } from '@modules/users/users.module';
+import { NotificationsModule } from '@modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UsersModule } from '@modules/users/users.module';
 
     //Business modules
     UsersModule,
+    NotificationsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
