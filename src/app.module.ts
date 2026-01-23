@@ -6,6 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { ThrottlerGuard, ThrottlerModule, seconds } from '@nestjs/throttler';
 
+import { EventEmitterModule } from '@nestjs/event-emitter';
+
 import { MongooseConfigService } from '@configs';
 
 import { ParseMongoIdPipe } from '@common/pipes';
@@ -16,6 +18,7 @@ import { CommonModule } from '@common/common.module';
 
 import { UsersModule } from '@modules/users/users.module';
 import { NotificationsModule } from '@modules/notifications/notifications.module';
+import { EmailRequestModule } from '@modules/email-request/email-request.module';
 
 @Module({
   imports: [
@@ -30,11 +33,13 @@ import { NotificationsModule } from '@modules/notifications/notifications.module
       ],
       errorMessage: 'Too many requests, please try again later.',
     }),
+    EventEmitterModule.forRoot(),
     CommonModule,
 
     //Business modules
     UsersModule,
     NotificationsModule,
+    EmailRequestModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

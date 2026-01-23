@@ -1,1 +1,1 @@
-export * from './email-notification.service';
+export * from './email.provider';

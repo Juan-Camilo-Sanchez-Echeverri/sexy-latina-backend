@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EmailNotificationService } from './providers';
+import { EmailProvider } from './providers';
 
 import { INotificationProvider, EmailPayload } from './interfaces';
 
@@ -16,7 +16,7 @@ export class NotificationsService {
     [K in NotificationType]: INotificationProvider<PayloadByType[K]>;
   };
 
-  constructor(private readonly emailService: EmailNotificationService) {
+  constructor(private readonly emailService: EmailProvider) {
     this.providersMap = {
       [NotificationType.EMAIL]: this.emailService,
     };

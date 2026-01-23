@@ -11,7 +11,7 @@ interface Data {
   firstName: string;
 }
 
-export const activateAccount = (data: Data) => {
+export const activateAccountTemplate = (data: Data) => {
   const { email, token, firstName } = data;
   return `
     <!doctype html>

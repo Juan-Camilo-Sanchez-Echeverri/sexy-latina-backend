@@ -4,8 +4,10 @@ import { PopulateOptions } from 'mongoose';
 
 import { ICrudService } from '@common/interfaces';
 
-import { Status } from '@common/enums';
+import { Status, Events } from '@common/enums';
 import { bcryptAdapter } from '@common/adapters';
+
+import { EventEmitterService } from '@modules/event-emitter/event-emitter.service';
 
 import { CreateUserDto, UpdateUserDto, FilterUsersDto } from './dto';
 
@@ -17,11 +19,12 @@ import { UsersErrors } from './errors/users.errors';
 
 @Injectable()
 export class UsersService implements ICrudService<UserDocument> {
-  private readonly pathsPopulate: PopulateOptions[] = [
-    { path: 'createdBy', select: 'firstName lastName email phone' },
-  ];
+  private readonly pathsPopulate: PopulateOptions[] = [];
 
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly eventEmitter: EventEmitterService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
     const hashedPassword = await bcryptAdapter.hash(createUserDto.password);
@@ -31,7 +34,11 @@ export class UsersService implements ICrudService<UserDocument> {
       password: hashedPassword,
     });
 
-    return this.populateUser(newUser);
+    const populatedUser = await this.populateUser(newUser);
+
+    await this.eventEmitter.emitAsync(Events.USER_CREATED, populatedUser);
+
+    return populatedUser;
   }
 
   async findPaginate(filter: FilterUsersDto) {

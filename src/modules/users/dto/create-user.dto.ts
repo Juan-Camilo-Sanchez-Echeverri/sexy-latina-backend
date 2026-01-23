@@ -8,7 +8,7 @@ import {
 
 import { IsNotBlank, IsPassword } from '@common/decorators';
 
-import { UserRole } from '@common/enums';
+import { Status, UserRole } from '@common/enums';
 
 import { UserDocumentType } from '../enums/user-document-type.enum';
 
@@ -64,4 +64,10 @@ export class CreateUserDto {
   @ArrayUnique()
   @IsEnum(UserRole, { each: true })
   readonly roles: UserRole[];
+
+  /**
+   * The status of the user
+   */
+  @IsEnum(Status)
+  readonly status: Status;
 }

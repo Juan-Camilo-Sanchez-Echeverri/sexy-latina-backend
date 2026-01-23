@@ -12,12 +12,12 @@ import { INotificationProvider } from '../interfaces/notification.interface';
 import { EmailPayload } from '../interfaces/email-payload.interface';
 
 import { emailConfig } from '../config';
+import { NotificationType } from '../enums/notification-type.enum';
 
 @Injectable()
-export class EmailNotificationService
-  implements INotificationProvider<EmailPayload>
-{
-  private readonly logger = new Logger(EmailNotificationService.name);
+export class EmailProvider implements INotificationProvider<EmailPayload> {
+  readonly type = NotificationType.EMAIL;
+  private readonly logger = new Logger(EmailProvider.name);
 
   async send(payload: EmailPayload): Promise<boolean> {
     try {

@@ -76,7 +76,7 @@ export class User extends BaseSchema {
   /**
    * Current status of the user in the system.
    */
-  @Prop({ enum: Status, default: Status.ACTIVE, type: String })
+  @Prop({ enum: Status, default: Status.INACTIVE, type: String })
   status: Status;
 }
 
