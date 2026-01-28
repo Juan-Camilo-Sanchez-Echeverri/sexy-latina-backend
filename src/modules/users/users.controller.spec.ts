@@ -69,6 +69,7 @@ describe('UsersController', () => {
         phone: '',
         document: '',
         documentType: UserDocumentType.TI,
+        status: Status.ACTIVE,
       };
 
       const result = { _id: 'user1', ...dto };

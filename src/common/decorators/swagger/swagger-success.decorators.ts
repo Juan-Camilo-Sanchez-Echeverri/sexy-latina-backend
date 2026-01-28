@@ -26,10 +26,16 @@ export const ApiNoContentResponseWrapper = () => {
   return applyDecorators(ApiNoContentResponse({ description: 'No content' }));
 };
 
+interface ApiOkResponseOptions {
+  isPaginate: boolean;
+}
+
 export const ApiOkResponseWrapper = <TModel extends Type>(
   model: TModel,
-  isPaginate: boolean,
+  options: ApiOkResponseOptions,
 ) => {
+  const { isPaginate } = options;
+
   return applyDecorators(
     ApiExtraModels(PaginationResponse, model),
     ApiOkResponse({

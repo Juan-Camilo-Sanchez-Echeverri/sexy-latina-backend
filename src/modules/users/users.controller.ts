@@ -73,7 +73,7 @@ export class UsersController {
    */
   @Get()
   @Roles('ADMIN')
-  @ApiOkResponseWrapper(UserResponse, true)
+  @ApiOkResponseWrapper(UserResponse, { isPaginate: true })
   async findAll(@Query(FilterUserPipe) params: FilterUsersDto) {
     return this.usersService.findPaginate(params);
   }
@@ -87,8 +87,7 @@ export class UsersController {
    */
   @Get(':id')
   @AllRoles()
-  // @UseGuards(OwnUserGuard)
-  @ApiOkResponseWrapper(UserResponse, false)
+  @ApiOkResponseWrapper(UserResponse, { isPaginate: false })
   @ApiParam({ name: 'id', description: 'The user id' })
   @ApiNotFoundResponseWrapper(UsersErrors.USER_NOT_FOUND)
   async findOne(@Param('id') id: string) {
@@ -105,7 +104,7 @@ export class UsersController {
   @Patch(':id')
   @AllRoles()
   @UseGuards(OwnUserGuard)
-  @ApiOkResponseWrapper(UserResponse, false)
+  @ApiOkResponseWrapper(UserResponse, { isPaginate: false })
   @ApiNotFoundResponseWrapper(UsersErrors.USER_NOT_FOUND)
   @ApiConflictResponseWrapper(UsersExamples.conflictResponse)
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
