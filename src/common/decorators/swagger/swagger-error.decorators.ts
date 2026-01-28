@@ -86,7 +86,12 @@ export const ApiNotFoundResponseWrapper = (example: ErrorsResponse) => {
   return ApiNotFoundResponse({
     description: 'Not Found (resource not found)',
     schema: ERROR_SCHEMA,
-    example,
+    example: {
+      error: 'NotFound',
+      status: 404,
+      path: '/api/v1.0/',
+      ...example,
+    },
   });
 };
 
@@ -94,7 +99,12 @@ export const ApiConflictResponseWrapper = (example: ErrorsResponse) => {
   return ApiConflictResponse({
     description: 'Conflict – duplicate resource or business rule violation',
     schema: ERROR_NULL_SCHEMA,
-    example,
+    example: {
+      error: 'Conflict',
+      status: 409,
+      path: '/api/v1.0/',
+      ...example,
+    },
   });
 };
 
@@ -102,6 +112,11 @@ export const ApiValidationResponseWrapper = (example: ErrorsResponse) => {
   return ApiUnprocessableEntityResponse({
     description: 'Unprocessable Entity – validation failed',
     schema: ERROR_NULL_SCHEMA,
-    example,
+    example: {
+      error: 'UnprocessableEntity',
+      status: 422,
+      path: '/api/v1.0/',
+      ...example,
+    },
   });
 };
