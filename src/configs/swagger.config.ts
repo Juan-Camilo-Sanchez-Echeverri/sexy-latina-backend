@@ -17,7 +17,7 @@ const swaggerConfig = new DocumentBuilder()
       type: 'object',
       properties: {
         error: { type: 'string' },
-        code: { type: 'number' },
+        code: { type: 'null' },
         status: { type: 'number' },
         path: { type: 'string' },
         details: {
@@ -25,7 +25,7 @@ const swaggerConfig = new DocumentBuilder()
           items: {
             type: 'object',
             properties: {
-              property: { type: 'string' },
+              property: { type: 'null' },
               errors: {
                 type: 'array',
                 items: { type: 'string' },

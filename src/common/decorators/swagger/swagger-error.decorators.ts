@@ -14,6 +14,20 @@ import { ErrorsResponse } from '../../responses';
 
 import { AuthErrors } from '@modules/auth/errors/auth.errors';
 
+const DETAILS_SCHEMA: SchemaObject = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      property: { oneOf: [{ type: 'string' }, { type: 'null' }] },
+      errors: {
+        type: 'array',
+        items: { type: 'string' },
+      },
+    },
+  },
+};
+
 const ERROR_SCHEMA: SchemaObject = {
   type: 'object',
   properties: {
@@ -21,19 +35,7 @@ const ERROR_SCHEMA: SchemaObject = {
     code: { type: 'number' },
     status: { type: 'number' },
     path: { type: 'string' },
-    details: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          property: { type: 'string' },
-          errors: {
-            type: 'array',
-            items: { type: 'string' },
-          },
-        },
-      },
-    },
+    details: DETAILS_SCHEMA,
   },
 };
 
@@ -44,7 +46,7 @@ const ERROR_NULL_SCHEMA: SchemaObject = {
     code: { type: 'null' },
     status: { type: 'number' },
     path: { type: 'string' },
-    details: {},
+    details: DETAILS_SCHEMA,
   },
 };
 
@@ -96,19 +98,10 @@ export const ApiConflictResponseWrapper = (example: ErrorsResponse) => {
   });
 };
 
-export const ApiValidationResponseWrapper = (messagesExample: string[]) => {
+export const ApiValidationResponseWrapper = (example: ErrorsResponse) => {
   return ApiUnprocessableEntityResponse({
     description: 'Unprocessable Entity – validation failed',
-    schema: {
-      type: 'object',
-      properties: {
-        code: { type: 'null' },
-        message: { type: 'array', items: { type: 'string' } },
-      },
-    },
-    example: {
-      code: null,
-      message: messagesExample,
-    },
+    schema: ERROR_NULL_SCHEMA,
+    example,
   });
 };
