@@ -26,6 +26,10 @@ interface EnvVars {
 
   USER_NOTIFICATIONS: string;
   PASSWORD_NOTIFICATIONS: string;
+
+  REDIS_PASSWORD: string;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
 }
 
 const envSchema = joi
@@ -44,6 +48,10 @@ const envSchema = joi
 
     USER_NOTIFICATIONS: joi.string().required(),
     PASSWORD_NOTIFICATIONS: joi.string().required(),
+
+    REDIS_PASSWORD: joi.string().required(),
+    REDIS_HOST: joi.string().required(),
+    REDIS_PORT: joi.number().required(),
   })
   .unknown(true);
 
@@ -73,4 +81,8 @@ export const envs = {
 
   userNotifications: envVars.USER_NOTIFICATIONS,
   passwordNotifications: envVars.PASSWORD_NOTIFICATIONS,
+
+  redisPassword: envVars.REDIS_PASSWORD,
+  redisHost: envVars.REDIS_HOST,
+  redisPort: envVars.REDIS_PORT,
 };
