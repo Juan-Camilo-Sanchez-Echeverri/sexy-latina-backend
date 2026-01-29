@@ -5,6 +5,8 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 
+import { Types } from 'mongoose';
+
 interface MongoError {
   name: string;
   code?: number;
@@ -61,3 +63,8 @@ export function validateMongo<T>(
     next(error);
   }
 }
+
+export type PopulatedEntity<T, K extends keyof T = keyof T> =
+  | Types.ObjectId
+  | Pick<T, K>
+  | null;
