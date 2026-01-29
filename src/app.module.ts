@@ -1,3 +1,7 @@
+import { createHash } from 'node:crypto';
+
+import type { Request } from 'express';
+
 import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 
 import { Module } from '@nestjs/common';
@@ -7,6 +11,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule, seconds } from '@nestjs/throttler';
 
 import { EventEmitterModule } from '@nestjs/event-emitter';
+
+import { ClsModule, ClsService } from 'nestjs-cls';
 
 import { MongooseConfigService } from '@configs';
 
@@ -35,6 +41,21 @@ import { AddressModule } from '@modules/address/address.module';
       errorMessage: 'Too many requests, please try again later.',
     }),
     EventEmitterModule.forRoot(),
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true,
+        setup(cls: ClsService<{ url: string }>, req: Request) {
+          if (req.method !== 'GET') return;
+
+          const reqHash = createHash('sha256')
+            .update(req.originalUrl)
+            .digest('hex');
+
+          cls.set('url', reqHash);
+        },
+      },
+    }),
     CommonModule,
 
     //Business modules

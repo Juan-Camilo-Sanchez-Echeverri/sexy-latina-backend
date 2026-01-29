@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PaginateResult } from 'mongoose';
 
+import { CacheService } from '@modules/cache/cache.service';
+
 import { FilterCountryDto } from './dto';
 
 import { CountryErrors } from './errors/countries.errors';
@@ -12,14 +14,27 @@ import { CountryDocument } from './schemas/country.schema';
 
 @Injectable()
 export class CountriesService {
-  constructor(private readonly countriesRepository: CountriesRepository) {}
+  constructor(
+    private readonly countriesRepository: CountriesRepository,
+    private readonly cacheService: CacheService,
+  ) {}
 
   async findPaginate(
     query: FilterCountryDto,
+    cacheKey: string,
   ): Promise<PaginateResult<CountryDocument>> {
-    return await this.countriesRepository.findPaginate(query, {
+    const cached =
+      await this.cacheService.get<PaginateResult<CountryDocument>>(cacheKey);
+
+    if (cached) return cached;
+
+    const result = await this.countriesRepository.findPaginate(query, {
       sort: { name: 1 },
     });
+
+    await this.cacheService.set(cacheKey, result);
+
+    return result;
   }
 
   async findOneById(id: string): Promise<CountryDocument> {

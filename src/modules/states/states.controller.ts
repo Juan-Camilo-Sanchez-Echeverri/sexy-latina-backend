@@ -9,6 +9,10 @@ import {
   Public,
 } from '@common/decorators';
 
+import { ClsService } from 'nestjs-cls';
+
+import { ROOT_PREFIX_STATES } from './constants/states.constants';
+
 import { FilterStatesDto } from './dto';
 
 import { FilterStatesPipe } from './pipes/filter-states.pipe';
@@ -20,10 +24,13 @@ import { CountryErrors } from '../countries/errors/countries.errors';
 import { StatesExamples } from './swagger/states.examples';
 
 @Public()
-@ApiTags('states')
-@Controller('states')
+@ApiTags(ROOT_PREFIX_STATES)
+@Controller(ROOT_PREFIX_STATES)
 export class StatesController {
-  constructor(private readonly statesService: StatesService) {}
+  constructor(
+    private readonly statesService: StatesService,
+    private readonly cls: ClsService<{ url: string }>,
+  ) {}
 
   /**
    * Get all states
@@ -38,6 +45,13 @@ export class StatesController {
   @ApiOkResponseWrapper(StateResponse, { isPaginate: true })
   @ApiValidationResponseWrapper(StatesExamples.invalidCountryId)
   async findByQuery(@Query(FilterStatesPipe) query: FilterStatesDto) {
-    return await this.statesService.findPaginate(query);
+    const cacheKey = this.createCacheKey();
+    return await this.statesService.findPaginate(query, cacheKey);
+  }
+
+  private createCacheKey(): string {
+    const url = this.cls.get('url');
+
+    return `${ROOT_PREFIX_STATES}:${url}`;
   }
 }
