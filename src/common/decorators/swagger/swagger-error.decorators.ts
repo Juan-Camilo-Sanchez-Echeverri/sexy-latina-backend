@@ -1,6 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 
 import {
+  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -115,6 +116,19 @@ export const ApiValidationResponseWrapper = (example: ErrorsResponse) => {
     example: {
       error: 'UnprocessableEntity',
       status: 422,
+      path: '/api/v1.0/',
+      ...example,
+    },
+  });
+};
+
+export const ApiBadRequestResponseWrapper = (example: ErrorsResponse) => {
+  return ApiBadRequestResponse({
+    description: 'Bad Request – invalid request payload',
+    schema: ERROR_SCHEMA,
+    example: {
+      error: 'BadRequest',
+      status: 400,
       path: '/api/v1.0/',
       ...example,
     },
