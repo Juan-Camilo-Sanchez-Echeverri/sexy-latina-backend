@@ -14,7 +14,7 @@ export class Country {
   /**
    * Country name
    */
-  @Prop({ required: true, unique: true, index: true })
+  @Prop({ required: true, unique: true })
   name: string;
 }
 

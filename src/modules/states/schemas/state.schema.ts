@@ -27,7 +27,7 @@ export class State {
   /**
    * State name
    */
-  @Prop({ required: true, trim: true, index: true })
+  @Prop({ required: true })
   name: string;
 
   /**
