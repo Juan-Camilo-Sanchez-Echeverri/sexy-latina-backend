@@ -75,10 +75,9 @@ export class EmailRequestService {
 
     const update = {
       $set: {
-        [`requests.${type}`]: {
-          token,
-          expiresIn,
-        },
+        [`requests.${type}.token`]: token,
+        [`requests.${type}.expiresIn`]: expiresIn,
+        [`requests.${type}.lastAttemptAt`]: DateHelper.getCurrentDate(),
       },
       $inc: { [`requests.${type}.attempts`]: 1 },
     };

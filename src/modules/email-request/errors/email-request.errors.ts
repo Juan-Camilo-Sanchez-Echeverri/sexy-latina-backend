@@ -1,22 +1,51 @@
-export const EmailRequestErrors = {
+import { ErrorsResponse } from '@common/responses';
+
+const code = 6000;
+
+export const EmailRequestErrors: Record<string, ErrorsResponse> = {
   TOKEN_INVALID: {
-    code: 9000,
-    message: 'Email request token is invalid',
+    code: code,
+    details: [
+      {
+        property: 'token',
+        errors: ['Email request token is invalid'],
+      },
+    ],
   },
   TOKEN_EXPIRED: {
-    code: 9001,
-    message: 'Email request token expired',
+    code: code + 1,
+    details: [
+      {
+        property: 'token',
+        errors: ['Email request token expired'],
+      },
+    ],
   },
   MAX_ATTEMPTS_REACHED: {
-    code: 9002,
-    message: 'Maximum number of attempts reached',
+    code: code + 2,
+    details: [
+      {
+        property: 'attempts',
+        errors: ['Maximum number of attempts reached'],
+      },
+    ],
   },
   REQUEST_NOT_FOUND_OR_EXPIRED: {
-    code: 9003,
-    message: 'Request not found or expired',
+    code: code + 3,
+    details: [
+      {
+        property: 'request',
+        errors: ['Request not found or expired'],
+      },
+    ],
   },
   COOLDOWN_ACTIVE: {
-    code: 9004,
-    message: 'Please wait before requesting another email',
+    code: code + 4,
+    details: [
+      {
+        property: 'cooldown',
+        errors: ['Please wait before requesting another email'],
+      },
+    ],
   },
 };
