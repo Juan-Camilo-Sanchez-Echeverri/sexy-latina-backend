@@ -68,12 +68,6 @@ export class User extends BaseSchema {
   roles: UserRole[];
 
   /**
-   * Email verification status.
-   */
-  @Prop({ default: false, type: Boolean })
-  emailVerified: boolean;
-
-  /**
    * Current status of the user in the system.
    */
   @Prop({ enum: Status, default: Status.INACTIVE, type: String })
