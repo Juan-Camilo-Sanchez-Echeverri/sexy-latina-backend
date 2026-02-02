@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { NotFoundException } from '@nestjs/common';
 
-import { UserRole } from '@common/enums';
+import { Status, UserRole } from '@common/enums';
+
+import { EventEmitterService } from '@modules/event-emitter/event-emitter.service';
 
 import { CreateUserDto, UpdateUserDto, FilterUsersDto } from './dto';
 
@@ -46,6 +48,10 @@ describe('UsersService', () => {
           provide: UsersRepository,
           useValue: mockUserRepository,
         },
+        {
+          provide: EventEmitterService,
+          useValue: { emitAsync: jest.fn() },
+        },
       ],
     }).compile();
 
@@ -71,6 +77,7 @@ describe('UsersService', () => {
         phone: '',
         document: '',
         documentType: UserDocumentType.TI,
+        status: Status.ACTIVE,
       };
 
       const result = await service.create(dto);

@@ -104,6 +104,17 @@ export class UsersService implements ICrudService<UserDocument> {
     return this.usersRepository.count(query);
   }
 
+  async updateStatus(id: string, status: Status): Promise<UserDocument> {
+    const updatedUser = await this.usersRepository.findOneAndUpdate(
+      { _id: id },
+      { status },
+    );
+
+    if (!updatedUser) throw new NotFoundException(UsersErrors.USER_NOT_FOUND);
+
+    return this.populateUser(updatedUser);
+  }
+
   private async populateUser(doc: UserDocument): Promise<UserDocument> {
     return doc.populate(this.pathsPopulate);
   }

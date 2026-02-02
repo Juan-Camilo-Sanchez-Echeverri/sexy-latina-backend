@@ -78,7 +78,8 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.set('toJSON', {
   transform: (_doc, ret) => {
-    const { password, ...result } = ret;
+    const result = { ...ret };
+    delete (result as Partial<User>).password;
     return result;
   },
 });
