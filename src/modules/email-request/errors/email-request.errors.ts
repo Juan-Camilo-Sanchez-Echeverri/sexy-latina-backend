@@ -2,7 +2,7 @@ import { ErrorsResponse } from '@common/responses';
 
 const code = 6000;
 
-export const EmailRequestErrors: Record<string, ErrorsResponse> = {
+export const EmailRequestErrors = {
   TOKEN_INVALID: {
     code: code,
     details: [
@@ -48,4 +48,4 @@ export const EmailRequestErrors: Record<string, ErrorsResponse> = {
       },
     ],
   },
-};
+} as const satisfies Record<string, ErrorsResponse>;

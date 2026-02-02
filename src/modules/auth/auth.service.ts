@@ -6,8 +6,11 @@ import { bcryptAdapter } from '@common/adapters';
 
 import { Status } from '@common/enums';
 
+import { DateHelper } from '@common/helpers';
+
 import { EmailRequestService } from '@modules/email-request/email-request.service';
 import { UsersService } from '@modules/users/users.service';
+import { UserDocument } from '@modules/users/schemas/user.schema';
 
 import {
   ActivateAccountDto,
@@ -19,12 +22,12 @@ import {
 
 import { AuthErrors } from './errors/auth.errors';
 
-import { UserDocument } from '../users/schemas/user.schema';
-
 import {
+  ActivateAccountResponse,
   ChangePasswordResponse,
   LoginResponse,
   RecoverPasswordResponse,
+  RequestActivateAccountResponse,
   ResetPasswordResponse,
 } from './responses';
 
@@ -78,7 +81,9 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException(AuthErrors.EMAIL_NOT_FOUND);
 
-    const expiresIn = new Date(Date.now() + 10 * 60 * 1000);
+    const currentDate = DateHelper.getCurrentDate();
+    const expiresIn = DateHelper.add(currentDate, 10, 'minutes');
+
     await this.emailRequestService.create({
       email,
       type: 'recoverPassword',
@@ -95,6 +100,7 @@ export class AuthService {
     const { token, email, password } = resetPasswordDto;
 
     const user = await this.usersService.findOneBy({ email });
+
     if (!user) throw new UnauthorizedException(AuthErrors.EMAIL_NOT_FOUND);
 
     await this.emailRequestService.validate({
@@ -135,7 +141,7 @@ export class AuthService {
 
   async activateAccount(
     activateAccountDto: ActivateAccountDto,
-  ): Promise<{ active: boolean }> {
+  ): Promise<ActivateAccountResponse> {
     const { token, email } = activateAccountDto;
 
     const user = await this.usersService.findOneBy({ email });
@@ -154,7 +160,9 @@ export class AuthService {
     return { active: true };
   }
 
-  async requestActivateAccount(email: string) {
+  async requestActivateAccount(
+    email: string,
+  ): Promise<RequestActivateAccountResponse> {
     const user = await this.usersService.findOneBy({ email });
 
     if (!user) return { send: false };

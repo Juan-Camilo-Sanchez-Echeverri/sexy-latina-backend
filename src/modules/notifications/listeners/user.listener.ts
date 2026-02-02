@@ -16,11 +16,14 @@ export class UserListener {
       return;
     }
 
+    const currentDate = DateHelper.getCurrentDate();
+    const expiresIn = DateHelper.add(currentDate, 10, 'minutes');
+
     await this.emailRequestService.create({
       email: user.email,
       firstName: user.firstName,
       type: 'activeAccount',
-      expiresIn: DateHelper.add(DateHelper.getCurrentDate(), 1, 'hour'),
+      expiresIn,
     });
   }
 }

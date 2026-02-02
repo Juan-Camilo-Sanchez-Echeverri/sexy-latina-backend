@@ -40,9 +40,11 @@ import {
 import { AuthService } from './auth.service';
 
 import {
+  ActivateAccountResponse,
   ChangePasswordResponse,
   LoginResponse,
   RecoverPasswordResponse,
+  RequestActivateAccountResponse,
   ResetPasswordResponse,
 } from './responses';
 
@@ -58,10 +60,8 @@ export class AuthController {
   /**
    * Login to your account
    *
-   * @remarks Log in with credentials and return access and refresh tokens.
+   * @remarks Log in with credentials and return access token.
    *
-   * @param loginAuthDto The user's login credentials.
-   * @returns JWT tokens including accessToken and refreshToken.
    */
   @Public()
   @Post('login')
@@ -102,11 +102,11 @@ export class AuthController {
   @Public()
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
+  @ApiValidationResponseWrapper(AuthExamples.resetPassword)
   @ApiNotFoundResponseWrapper(EmailRequestErrors.TOKEN_INVALID)
   @ApiConflictResponseWrapper(EmailRequestErrors.TOKEN_EXPIRED)
-  @ApiOkResponseWrapper(ResetPasswordResponse, { isPaginate: false })
-  @ApiValidationResponseWrapper(AuthExamples.resetPassword)
   @ApiUnauthorizedResponse({ example: AuthErrors.EMAIL_NOT_FOUND })
+  @ApiOkResponseWrapper(ResetPasswordResponse, { isPaginate: false })
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<ResetPasswordResponse> {
@@ -124,6 +124,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiAuthResponses()
   @HttpCode(HttpStatus.OK)
+  @ApiUnauthorizedResponse({ example: AuthErrors.PASSWORD_MISMATCH })
   @ApiOkResponseWrapper(ChangePasswordResponse, { isPaginate: false })
   async changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
@@ -141,6 +142,8 @@ export class AuthController {
   @AllRoles()
   @Get('me')
   @ApiBearerAuth()
+  @ApiAuthResponses()
+  @ApiOkResponseWrapper(UserResponse, { isPaginate: false })
   getMe(@CurrentUser() user: UserResponse): UserResponse {
     return user;
   }
@@ -154,9 +157,14 @@ export class AuthController {
   @Public()
   @Post('activate-account')
   @HttpCode(HttpStatus.OK)
+  @ApiValidationResponseWrapper(AuthExamples.activateAccount)
+  @ApiNotFoundResponseWrapper(EmailRequestErrors.TOKEN_INVALID)
+  @ApiConflictResponseWrapper(EmailRequestErrors.TOKEN_EXPIRED)
+  @ApiUnauthorizedResponse({ example: AuthErrors.EMAIL_NOT_FOUND })
+  @ApiOkResponseWrapper(ActivateAccountResponse, { isPaginate: false })
   async activateAccount(
     @Body() activateAccountDto: ActivateAccountDto,
-  ): Promise<{ active: boolean }> {
+  ): Promise<ActivateAccountResponse> {
     return await this.authService.activateAccount(activateAccountDto);
   }
 
@@ -168,9 +176,13 @@ export class AuthController {
    */
   @Public()
   @Get('activate-account')
+  @ApiNotFoundResponseWrapper(EmailRequestErrors.TOKEN_INVALID)
+  @ApiConflictResponseWrapper(EmailRequestErrors.TOKEN_EXPIRED)
+  @ApiUnauthorizedResponse({ example: AuthErrors.EMAIL_NOT_FOUND })
+  @ApiOkResponseWrapper(RequestActivateAccountResponse, { isPaginate: false })
   async requestActivateAccount(
     @Query('email') email: string,
-  ): Promise<{ send: boolean }> {
+  ): Promise<RequestActivateAccountResponse> {
     return await this.authService.requestActivateAccount(email);
   }
 }

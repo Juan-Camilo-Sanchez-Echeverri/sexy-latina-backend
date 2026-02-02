@@ -1,3 +1,5 @@
+import { ErrorsResponse } from '@common/responses';
+
 const code = 3000;
 
 export const CountryErrors = {
@@ -5,4 +7,4 @@ export const CountryErrors = {
     code,
     details: [{ property: null, errors: ['This country does not exist'] }],
   },
-};
+} as const satisfies Record<string, ErrorsResponse>;

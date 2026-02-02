@@ -1,6 +1,6 @@
 import { ErrorsResponse } from '@common/responses';
 
-export const AuthExamples: Record<string, ErrorsResponse> = {
+export const AuthExamples = {
   login: {
     code: null,
     details: [
@@ -40,4 +40,17 @@ export const AuthExamples: Record<string, ErrorsResponse> = {
       },
     ],
   },
-};
+  activateAccount: {
+    code: null,
+    details: [
+      {
+        property: 'token',
+        errors: ['token should not be empty and is string'],
+      },
+      {
+        property: 'email',
+        errors: ['email must be an email'],
+      },
+    ],
+  },
+} satisfies Record<string, ErrorsResponse>;
