@@ -4,3 +4,4 @@ export * from './public.decorator';
 export * from './roles.decorator';
 export * from './swagger/swagger-error.decorators';
 export * from './swagger/swagger-success.decorators';
+export * from './user.decorator';

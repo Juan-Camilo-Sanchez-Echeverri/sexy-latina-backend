@@ -24,6 +24,9 @@ interface EnvVars {
   ALLOWED_ORIGINS: string[];
   DISCORD_WEBHOOK_URL: string;
 
+  JWT_SECRET: string;
+  JWT_EXPIRATION: string;
+
   USER_NOTIFICATIONS: string;
   PASSWORD_NOTIFICATIONS: string;
 
@@ -45,6 +48,9 @@ const envSchema = joi
     APP_URL: joi.string().uri().required(),
     FRONT_PUBLIC_URL: joi.string().uri().required(),
     ALLOWED_ORIGINS: joi.array().items(joi.string().uri()).required(),
+
+    JWT_SECRET: joi.string().required(),
+    JWT_EXPIRATION: joi.string().required(),
 
     USER_NOTIFICATIONS: joi.string().required(),
     PASSWORD_NOTIFICATIONS: joi.string().required(),
@@ -78,6 +84,9 @@ export const envs = {
   appUrl: envVars.APP_URL,
   frontPublicUrl: envVars.FRONT_PUBLIC_URL,
   allowedOrigins: envVars.ALLOWED_ORIGINS,
+
+  jwtSecret: envVars.JWT_SECRET,
+  jwtExpiration: envVars.JWT_EXPIRATION,
 
   userNotifications: envVars.USER_NOTIFICATIONS,
   passwordNotifications: envVars.PASSWORD_NOTIFICATIONS,

@@ -1,8 +1,10 @@
 import { ErrorsResponse } from '@common/responses';
 
+const code = 5000;
+
 export const AuthErrors = {
   UNAUTHENTICATED_USER: {
-    code: 8000,
+    code: code,
     details: [
       {
         property: 'user',
@@ -12,7 +14,7 @@ export const AuthErrors = {
   },
 
   TOKEN_NOT_FOUND: {
-    code: 8001,
+    code: code + 1,
     details: [
       {
         property: 'token',
@@ -22,7 +24,7 @@ export const AuthErrors = {
   },
 
   TOKEN_EXPIRED: {
-    code: 8002,
+    code: code + 2,
     details: [
       {
         property: 'token',
@@ -32,7 +34,7 @@ export const AuthErrors = {
   },
 
   INVALID_TOKEN: {
-    code: 8003,
+    code: code + 3,
     details: [
       {
         property: 'token',
@@ -42,7 +44,7 @@ export const AuthErrors = {
   },
 
   USER_NOT_FOUND: {
-    code: 8004,
+    code: code + 4,
     details: [
       {
         property: 'user',
@@ -51,7 +53,7 @@ export const AuthErrors = {
     ],
   },
   USER_EMAIL_NOT_FOUND: {
-    code: 8100,
+    code: code + 5,
     details: [
       {
         property: 'credentials',
@@ -61,7 +63,7 @@ export const AuthErrors = {
   },
 
   PASSWORD_MISMATCH: {
-    code: 8101,
+    code: code + 6,
     details: [
       {
         property: 'credentials',
@@ -71,7 +73,7 @@ export const AuthErrors = {
   },
 
   USER_INACTIVE: {
-    code: 8102,
+    code: code + 7,
     details: [
       {
         property: 'user',
@@ -81,7 +83,7 @@ export const AuthErrors = {
   },
 
   USER_DELETED: {
-    code: 8103,
+    code: code + 8,
     details: [
       {
         property: 'user',
@@ -91,7 +93,7 @@ export const AuthErrors = {
   },
 
   EMAIL_NOT_FOUND: {
-    code: 8200,
+    code: code + 9,
     details: [
       {
         property: 'email',
