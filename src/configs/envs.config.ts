@@ -6,6 +6,8 @@ import { resolve } from 'node:path';
 
 import { ExecModes } from '@common/enums';
 
+import { UserDocumentType } from '@modules/users/enums/user-document-type.enum';
+
 const nodeEnv = (process.env.NODE_ENV?.trim() as ExecModes) || ExecModes.LOCAL;
 
 const envFile = nodeEnv === ExecModes.PROD ? '.env' : `.env.${nodeEnv}`;
@@ -33,6 +35,14 @@ interface EnvVars {
   REDIS_PASSWORD: string;
   REDIS_HOST: string;
   REDIS_PORT: number;
+
+  DEFAULT_USER_FIRST_NAME: string;
+  DEFAULT_USER_LAST_NAME: string;
+  DEFAULT_USER_EMAIL: string;
+  DEFAULT_USER_PHONE: string;
+  DEFAULT_USER_DOCUMENT: string;
+  DEFAULT_USER_DOCUMENT_TYPE: UserDocumentType;
+  DEFAULT_USER_PASSWORD: string;
 }
 
 const envSchema = joi
@@ -58,6 +68,14 @@ const envSchema = joi
     REDIS_PASSWORD: joi.string().required(),
     REDIS_HOST: joi.string().required(),
     REDIS_PORT: joi.number().required(),
+
+    DEFAULT_USER_FIRST_NAME: joi.string().required(),
+    DEFAULT_USER_LAST_NAME: joi.string().required(),
+    DEFAULT_USER_EMAIL: joi.string().required(),
+    DEFAULT_USER_PHONE: joi.string().required(),
+    DEFAULT_USER_DOCUMENT: joi.string().required(),
+    DEFAULT_USER_DOCUMENT_TYPE: joi.string().required(),
+    DEFAULT_USER_PASSWORD: joi.string().required(),
   })
   .unknown(true);
 
@@ -94,4 +112,12 @@ export const envs = {
   redisPassword: envVars.REDIS_PASSWORD,
   redisHost: envVars.REDIS_HOST,
   redisPort: envVars.REDIS_PORT,
+
+  defaultUserFirstName: envVars.DEFAULT_USER_FIRST_NAME,
+  defaultUserLastName: envVars.DEFAULT_USER_LAST_NAME,
+  defaultUserEmail: envVars.DEFAULT_USER_EMAIL,
+  defaultUserPhone: envVars.DEFAULT_USER_PHONE,
+  defaultUserDocument: envVars.DEFAULT_USER_DOCUMENT,
+  defaultUserDocumentType: envVars.DEFAULT_USER_DOCUMENT_TYPE,
+  defaultUserPassword: envVars.DEFAULT_USER_PASSWORD,
 };

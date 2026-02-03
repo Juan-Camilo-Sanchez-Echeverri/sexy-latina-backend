@@ -2,9 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PopulateOptions } from 'mongoose';
 
+import { envs } from '@configs';
+
 import { ICrudService } from '@common/interfaces';
 
-import { Status, Events } from '@common/enums';
+import { Status, Events, UserRole } from '@common/enums';
 import { bcryptAdapter } from '@common/adapters';
 
 import { EventEmitterService } from '@modules/event-emitter/event-emitter.service';
@@ -20,6 +22,24 @@ import { UsersErrors } from './errors/users.errors';
 @Injectable()
 export class UsersService implements ICrudService<UserDocument> {
   private readonly pathsPopulate: PopulateOptions[] = [];
+
+  async onModuleInit() {
+    const existingUser = await this.usersRepository.findOne({});
+
+    if (!existingUser) {
+      await this.create({
+        firstName: envs.defaultUserFirstName,
+        lastName: envs.defaultUserLastName,
+        email: envs.defaultUserEmail,
+        password: envs.defaultUserPassword,
+        phone: envs.defaultUserPhone,
+        document: envs.defaultUserDocument,
+        documentType: envs.defaultUserDocumentType,
+        roles: [UserRole.ADMIN],
+        status: Status.ACTIVE,
+      });
+    }
+  }
 
   constructor(
     private readonly usersRepository: UsersRepository,
