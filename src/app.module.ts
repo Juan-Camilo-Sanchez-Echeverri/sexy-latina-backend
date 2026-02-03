@@ -16,6 +16,10 @@ import { ClsModule, ClsService } from 'nestjs-cls';
 
 import { MongooseConfigService } from '@configs';
 
+import { RolesGuard } from '@common/guards';
+
+import { AuthGuard } from '@modules/auth/guards/auth.guard';
+
 import { ParseMongoIdPipe } from '@common/pipes';
 
 import { HttpExceptionFilter } from '@common/filters';
@@ -68,6 +72,8 @@ import { AuthModule } from '@modules/auth/auth.module';
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_PIPE, useClass: ParseMongoIdPipe },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
   ],
