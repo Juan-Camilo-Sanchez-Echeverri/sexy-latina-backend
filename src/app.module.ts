@@ -4,7 +4,7 @@ import type { Request } from 'express';
 
 import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -17,6 +17,8 @@ import { ClsModule, ClsService } from 'nestjs-cls';
 import { MongooseConfigService } from '@configs';
 
 import { RolesGuard } from '@common/guards';
+
+import { LoggerMiddleware } from '@common/middlewares';
 
 import { AuthGuard } from '@modules/auth/guards/auth.guard';
 
@@ -80,4 +82,8 @@ import { ModelsModule } from '@modules/models/models.module';
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('{*splat}');
+  }
+}
