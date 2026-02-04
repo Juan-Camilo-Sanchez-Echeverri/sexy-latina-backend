@@ -1,5 +1,7 @@
 import { UnprocessableEntityException } from '@nestjs/common';
 
+import { ApiHideProperty } from '@nestjs/swagger';
+
 import type { QueryFilter } from 'mongoose';
 
 import { IsOptional } from 'class-validator';
@@ -10,6 +12,7 @@ import { PaginationDto } from './pagination.dto';
 // ? el generico es el documento que se va a filtrar
 export class FilterDto<T> extends PaginationDto {
   @IsOptional()
+  @ApiHideProperty()
   @Transform(({ value }: { value: QueryFilter<T> }) => {
     for (const key in value) {
       if (value[key] === 'undefined' || value[key] === '') {

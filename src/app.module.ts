@@ -31,6 +31,7 @@ import { NotificationsModule } from '@modules/notifications/notifications.module
 import { EmailRequestModule } from '@modules/email-request/email-request.module';
 import { AddressModule } from '@modules/address/address.module';
 import { AuthModule } from '@modules/auth/auth.module';
+import { ModelsModule } from '@modules/models/models.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { AuthModule } from '@modules/auth/auth.module';
     EmailRequestModule,
     AddressModule,
     AuthModule,
+    ModelsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
