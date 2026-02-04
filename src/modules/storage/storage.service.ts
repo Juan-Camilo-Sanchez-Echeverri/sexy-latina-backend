@@ -20,7 +20,7 @@ export class StorageService {
     strategy: StorageStrategy,
   ): Promise<string> {
     const buffer = file.buffer;
-    const filename = file.filename;
+    const filename = file.originalname;
 
     this.logAction('Save file', path, strategy);
     return this.getStrategy(strategy).saveFile(buffer, path, filename);
