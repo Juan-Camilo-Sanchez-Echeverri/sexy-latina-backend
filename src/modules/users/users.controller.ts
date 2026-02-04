@@ -23,7 +23,6 @@ import {
   Roles,
 } from '@common/decorators';
 
-import { AddCreatedByPipe } from '@common/pipes';
 import { Status } from '@common/enums';
 
 import { CreateUserDto, UpdateUserDto, FilterUsersDto } from './dto';
@@ -57,7 +56,7 @@ export class UsersController {
   @ApiCreatedResponseWrapper(UserResponse)
   @ApiConflictResponseWrapper(UsersExamples.conflictResponse)
   async create(
-    @Body(AddCreatedByPipe)
+    @Body()
     createUserDto: CreateUserDto,
   ) {
     return this.usersService.create(createUserDto);
