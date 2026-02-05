@@ -1,36 +1,4 @@
 services:
-  backend:
-    container_name: backend
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      - mongodb-primary
-      - mongodb-secondary-1
-      - mongodb-secondary-2
-    build:
-      context: .
-    ports:
-      - '${PORT}:${PORT}'
-    volumes:
-      - ./uploads:/app/uploads
-    networks:
-      - erotic_site
-
-  nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
-    restart: always
-    depends_on:
-      - backend
-    ports:
-      - '80:80'
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./uploads:/var/www/sexy-latina/uploads:ro
-    networks:
-      - erotic_site
-
   mongodb-primary:
     image: mongo:latest
     container_name: mongodb-primary
@@ -46,8 +14,8 @@ services:
       start_interval: 1s
       retries: 30
     volumes:
-      - './mongo/mongodb-primary/db:/data/db'
-      - './mongo/mongodb-primary/configdb:/data/configdb'
+      - '../mongo/mongodb-primary/db:/data/db'
+      - '../mongo/mongodb-primary/configdb:/data/configdb'
     networks:
       - erotic_site
 
@@ -59,8 +27,8 @@ services:
     ports:
       - 27018:27018
     volumes:
-      - './mongo/mongodb-secondary-1/db:/data/db'
-      - './mongo/mongodb-secondary-1/configdb:/data/configdb'
+      - '../mongo/mongodb-secondary-1/db:/data/db'
+      - '../mongo/mongodb-secondary-1/configdb:/data/configdb'
     networks:
       - erotic_site
 
@@ -72,10 +40,11 @@ services:
     ports:
       - 27019:27019
     volumes:
-      - './mongo/mongodb-secondary-2/db:/data/db'
-      - './mongo/mongodb-secondary-2/configdb:/data/configdb'
+      - '../mongo/mongodb-secondary-2/db:/data/db'
+      - '../mongo/mongodb-secondary-2/configdb:/data/configdb'
     networks:
       - erotic_site
+
 networks:
   erotic_site:
     name: erotic_site
