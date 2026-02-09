@@ -5,7 +5,6 @@ import {
   IsMongoId,
   IsNumber,
   IsOptional,
-  Max,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -29,6 +28,8 @@ export class CreateModelDto {
 
   /**
    * Age
+   *
+   * @example 25
    */
   @IsInt()
   @Min(18)
@@ -79,7 +80,7 @@ export class CreateModelDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => SocialLinksDto)
-  readonly socialLinks: SocialLinksDto;
+  readonly socialLinks?: SocialLinksDto;
 
   /**
    * Availability schedule
@@ -104,9 +105,9 @@ export class CreateModelDto {
 
   /**
    * Height in centimeters
+   *
+   * @example 1.75
    */
-  @IsNumber()
-  @Min(100)
-  @Max(250)
+  @IsNumber({ maxDecimalPlaces: 2 })
   readonly height: number;
 }

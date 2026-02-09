@@ -4,6 +4,8 @@ import { IsNotBlank } from '@common/decorators';
 export class AvailabilityScheduleDto {
   /**
    * Day of week (0 = Sunday, 6 = Saturday)
+   *
+   * @example 0
    */
   @IsInt()
   @Min(0)
