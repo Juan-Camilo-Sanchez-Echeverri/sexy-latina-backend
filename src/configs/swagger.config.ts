@@ -7,8 +7,8 @@ import {
 } from '@nestjs/swagger';
 
 const swaggerConfig = new DocumentBuilder()
-  .setTitle('API Piemce')
-  .setDescription('The API for Erotic Site application')
+  .setTitle('API Sexy Latina')
+  .setDescription('The API for Sexy Latina application')
   .setVersion('1.0.0')
   .addGlobalResponse({
     status: 500,
