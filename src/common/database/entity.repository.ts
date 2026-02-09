@@ -9,6 +9,7 @@ import {
   QueryOptions,
   UpdateQuery,
   Document,
+  ClientSession,
 } from 'mongoose';
 
 import { FilterDto } from '../dto';
@@ -63,7 +64,12 @@ export abstract class EntityRepository<T extends Document> {
     });
   }
 
-  async create(createDto: Partial<T>): Promise<T> {
+  async create(createDto: Partial<T>, session?: ClientSession): Promise<T> {
+    if (session) {
+      const doc = new this.entityModel(createDto);
+      return await doc.save({ session });
+    }
+
     return await this.entityModel.create(createDto);
   }
 

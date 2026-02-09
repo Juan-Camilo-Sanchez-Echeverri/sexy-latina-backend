@@ -1,12 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PopulateOptions, PaginateResult } from 'mongoose';
+import { PopulateOptions, PaginateResult, ClientSession } from 'mongoose';
 
 import { ICrudService } from '@common/interfaces';
-
-import { UserRole } from '@common/enums';
-
-import { UsersService } from '@modules/users/users.service';
 
 import { CreateModelDto, FilterModelDto, UpdateModelDto } from './dto';
 
@@ -25,30 +21,24 @@ export class ModelsService implements ICrudService<ModelDocument> {
     { path: 'user', select: 'firstName lastName phone' },
   ];
 
-  constructor(
-    private readonly modelsRepository: ModelsRepository,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly modelsRepository: ModelsRepository) {}
 
-  async create(createModelDto: CreateModelDto): Promise<ModelDocument> {
+  async create(
+    createModelDto: CreateModelDto,
+    session?: ClientSession,
+  ): Promise<ModelDocument> {
     const { user, city, state, country, ...rest } = createModelDto;
 
-    const userExists = await this.usersService.findOneBy({
-      _id: user,
-      roles: { $in: [UserRole.MODEL] },
-    });
-
-    if (!userExists) {
-      throw new NotFoundException(ModelsErrors.USER_IS_NOT_A_MODEL);
-    }
-
-    const newModel = await this.modelsRepository.create({
-      ...rest,
-      user: user as unknown as ModelDocument['user'],
-      city: city as unknown as ModelDocument['city'],
-      state: state as unknown as ModelDocument['state'],
-      country: country as unknown as ModelDocument['country'],
-    });
+    const newModel = await this.modelsRepository.create(
+      {
+        ...rest,
+        user: user as unknown as ModelDocument['user'],
+        city: city as unknown as ModelDocument['city'],
+        state: state as unknown as ModelDocument['state'],
+        country: country as unknown as ModelDocument['country'],
+      },
+      session,
+    );
 
     return this.populateModel(newModel);
   }

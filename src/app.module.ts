@@ -34,6 +34,7 @@ import { EmailRequestModule } from '@modules/email-request/email-request.module'
 import { AddressModule } from '@modules/address/address.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { ModelsModule } from '@modules/models/models.module';
+import { RegisterModule } from '@modules/register/register.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { ModelsModule } from '@modules/models/models.module';
     AddressModule,
     AuthModule,
     ModelsModule,
+    RegisterModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

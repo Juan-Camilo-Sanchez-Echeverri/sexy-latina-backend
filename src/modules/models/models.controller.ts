@@ -28,6 +28,7 @@ import {
 import { OwnModelGuard } from './guards';
 
 import { CreateModelDto, UpdateModelDto, FilterModelDto } from './dto';
+import { EnsureUserIsModelPipe } from './pipes/ensure-user-is-model.pipe';
 
 import { ModelsService } from './models.service';
 
@@ -54,7 +55,7 @@ export class ModelsController {
   @ApiAuthResponses()
   @ApiCreatedResponseWrapper(ModelResponse)
   @ApiValidationResponseWrapper(ModelsExamples.createModel)
-  async create(@Body() createModelDto: CreateModelDto) {
+  async create(@Body(EnsureUserIsModelPipe) createModelDto: CreateModelDto) {
     return await this.modelsService.create(createModelDto);
   }
 

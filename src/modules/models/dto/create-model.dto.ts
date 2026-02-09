@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsEnum,
+  IsInt,
   IsMongoId,
   IsNumber,
   IsOptional,
@@ -29,7 +30,7 @@ export class CreateModelDto {
   /**
    * Age
    */
-  @IsNumber()
+  @IsInt()
   @Min(18)
   readonly age: number;
 

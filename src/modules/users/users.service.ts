@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PopulateOptions } from 'mongoose';
+import { ClientSession, PopulateOptions } from 'mongoose';
 
 import { envs } from '@configs';
 
@@ -46,13 +46,19 @@ export class UsersService implements ICrudService<UserDocument> {
     private readonly eventEmitter: EventEmitterService,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
+  async create(
+    createUserDto: CreateUserDto,
+    session?: ClientSession,
+  ): Promise<UserDocument> {
     const hashedPassword = await bcryptAdapter.hash(createUserDto.password);
 
-    const newUser = await this.usersRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
+    const newUser = await this.usersRepository.create(
+      {
+        ...createUserDto,
+        password: hashedPassword,
+      },
+      session,
+    );
 
     const populatedUser = await this.populateUser(newUser);
 

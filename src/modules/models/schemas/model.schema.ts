@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 import { BaseSchema } from '@common/database';
 
@@ -40,6 +40,7 @@ export class Model extends BaseSchema {
     type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     required: true,
+    unique: true,
   })
   user: PopulatedEntity<
     UserDocument,
@@ -67,19 +68,31 @@ export class Model extends BaseSchema {
   /**
    * Reference to city (approximate location)
    */
-  @Prop({ type: Types.ObjectId, ref: City.name, required: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: City.name,
+    required: true,
+  })
   city: PopulatedEntity<CityDocument, '_id' | 'name'>;
 
   /**
    * Reference to state
    */
-  @Prop({ type: Types.ObjectId, ref: State.name, required: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: State.name,
+    required: true,
+  })
   state: PopulatedEntity<StateDocument, '_id' | 'name'>;
 
   /**
    * Reference to country
    */
-  @Prop({ type: Types.ObjectId, ref: Country.name, required: true })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Country.name,
+    required: true,
+  })
   country: PopulatedEntity<CountryDocument, '_id' | 'name'>;
 
   /**
@@ -149,6 +162,5 @@ ModelSchema.index({ state: 1 });
 ModelSchema.index({ country: 1 });
 ModelSchema.index({ status: 1 });
 ModelSchema.index({ verified: 1 });
-ModelSchema.index({ user: 1 });
 ModelSchema.index({ nationality: 1 });
 ModelSchema.index({ languages: 1 });
