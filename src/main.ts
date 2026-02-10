@@ -1,3 +1,5 @@
+import { join } from 'node:path';
+
 import { NestFactory } from '@nestjs/core';
 
 import {
@@ -82,6 +84,10 @@ async function bootstrap(): Promise<void> {
     type: VersioningType.URI,
     prefix: 'v',
     defaultVersion: '1.0',
+  });
+
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads',
   });
 
   /**

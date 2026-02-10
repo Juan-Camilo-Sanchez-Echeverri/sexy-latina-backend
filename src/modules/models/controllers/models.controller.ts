@@ -14,6 +14,8 @@ import {
 
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+import { ClsService } from 'nestjs-cls';
+
 import {
   ApiAuthResponses,
   ApiNotFoundResponseWrapper,
@@ -23,26 +25,36 @@ import {
   ApiNoContentResponseWrapper,
   Roles,
   ApiCreatedResponseWrapper,
+  CurrentUser,
+  AllRoles,
 } from '@common/decorators';
 
-import { OwnModelGuard } from './guards';
+import { StorageService } from '@modules/storage/storage.service';
 
-import { CreateModelDto, UpdateModelDto, FilterModelDto } from './dto';
-import { EnsureUserIsModelPipe } from './pipes/ensure-user-is-model.pipe';
+import { OwnModelGuard } from '../guards';
 
-import { ModelsService } from './models.service';
+import { CreateModelDto, UpdateModelDto, FilterModelDto } from '../dto';
+import { EnsureUserIsModelPipe } from '../pipes/ensure-user-is-model.pipe';
 
-import { ModelResponse } from './responses';
+import { ModelsService } from '../models.service';
 
-import { ModelsErrors } from './errors/models.errors';
+import { ModelResponse } from '../responses';
 
-import { ModelsExamples } from './swagger/models.examples';
+import { ModelsErrors } from '../errors/models.errors';
+
+import { ModelsExamples } from '../swagger/models.examples';
+
+import { ROOT_PREFIX_MODELS } from '../constants/models.constants';
 
 @Roles('ADMIN')
-@ApiTags('models')
-@Controller('models')
+@ApiTags(ROOT_PREFIX_MODELS)
+@Controller(ROOT_PREFIX_MODELS)
 export class ModelsController {
-  constructor(private readonly modelsService: ModelsService) {}
+  constructor(
+    private readonly modelsService: ModelsService,
+    private readonly storageService: StorageService,
+    private readonly cls: ClsService<{ url: string }>,
+  ) {}
 
   /**
    * Create a new model profile
@@ -71,7 +83,8 @@ export class ModelsController {
   @ApiAuthResponses()
   @ApiOkResponseWrapper(ModelResponse, { isPaginate: true })
   async findAll(@Query() params: FilterModelDto) {
-    return await this.modelsService.findPaginate(params);
+    const cacheKey = this.createCacheKey();
+    return await this.modelsService.findPaginate(params, cacheKey);
   }
 
   /**
@@ -85,7 +98,24 @@ export class ModelsController {
   @ApiOkResponseWrapper(ModelResponse, { isPaginate: true })
   async findAllPublic(@Query() params: FilterModelDto) {
     params.data = { verified: true, ...params.data };
-    return await this.modelsService.findPaginate(params);
+    const cacheKey = this.createCacheKey();
+    return await this.modelsService.findPaginate(params, cacheKey);
+  }
+
+  /**
+   * Get my model profile
+   *
+   * @remarks Retrieve the model profile of the authenticated user.
+   *
+   */
+  @Get('/me')
+  @AllRoles()
+  @ApiBearerAuth()
+  @ApiAuthResponses()
+  @ApiOkResponseWrapper(ModelResponse, { isPaginate: false })
+  @ApiNotFoundResponseWrapper(ModelsErrors.MODEL_NOT_FOUND)
+  async findMe(@CurrentUser('_id') userId: string) {
+    return await this.modelsService.findOneByUserId(userId);
   }
 
   /**
@@ -120,7 +150,16 @@ export class ModelsController {
     @Param('id') id: string,
     @Body() updateModelDto: UpdateModelDto,
   ) {
-    return await this.modelsService.update(id, updateModelDto);
+    const [model, modelUpdated] = await Promise.all([
+      this.modelsService.findOneById(id),
+      this.modelsService.update(id, updateModelDto),
+    ]);
+
+    if (model.profilePhoto && updateModelDto.profilePhoto === null) {
+      await this.storageService.deleteFile(model.profilePhoto, 'local');
+    }
+
+    return modelUpdated;
   }
 
   /**
@@ -138,5 +177,11 @@ export class ModelsController {
   @ApiNotFoundResponseWrapper(ModelsErrors.MODEL_NOT_FOUND)
   async remove(@Param('id') id: string) {
     return await this.modelsService.remove(id);
+  }
+
+  private createCacheKey(): string {
+    const url = this.cls.get('url');
+
+    return `${ROOT_PREFIX_MODELS}:${url}`;
   }
 }

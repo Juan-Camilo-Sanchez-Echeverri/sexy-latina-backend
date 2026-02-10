@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 import { BaseSchema } from '@common/database';
 
@@ -23,8 +23,7 @@ import {
 
 import { ServicePrice, ServicePriceSchema } from './service-price.schema';
 import { SocialLinks, SocialLinksSchema } from './social-links.schema';
-
-export type ModelDocument = HydratedDocument<Model>;
+import { PortafolioItem, PortafolioItemSchema } from './portafolio-item.schema';
 
 @Schema({
   timestamps: true,
@@ -56,8 +55,8 @@ export class Model extends BaseSchema {
   /**
    * Portfolio of images/videos (URLs)
    */
-  @Prop({ type: [String], default: [] })
-  portfolio: string[];
+  @Prop({ type: [PortafolioItemSchema], default: [] })
+  portafolio: PortafolioItem[];
 
   /**
    * List of services offered with prices
@@ -155,6 +154,12 @@ export class Model extends BaseSchema {
 }
 
 export const ModelSchema = SchemaFactory.createForClass(Model);
+
+export type ModelDocumentOverride = {
+  portafolio: Types.DocumentArray<PortafolioItem>;
+};
+
+export type ModelDocument = HydratedDocument<Model, ModelDocumentOverride>;
 
 ModelSchema.index({ categories: 1 });
 ModelSchema.index({ city: 1 });
