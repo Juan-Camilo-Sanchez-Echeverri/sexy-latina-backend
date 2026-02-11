@@ -14,6 +14,8 @@ import { ModelDocument } from './schemas/model.schema';
 
 import { ModelsErrors } from './errors/models.errors';
 
+import { ROOT_PREFIX_MODELS } from './constants/models.constants';
+
 @Injectable()
 export class ModelsService implements ICrudService<ModelDocument> {
   private readonly pathsPopulate: PopulateOptions[] = [
@@ -44,6 +46,8 @@ export class ModelsService implements ICrudService<ModelDocument> {
       },
       session,
     );
+
+    await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);
 
     return this.populateModel(newModel);
   }
@@ -96,6 +100,8 @@ export class ModelsService implements ICrudService<ModelDocument> {
       throw new NotFoundException(ModelsErrors.MODEL_NOT_FOUND);
     }
 
+    await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);
+
     return this.populateModel(updatedModel);
   }
 
@@ -105,6 +111,8 @@ export class ModelsService implements ICrudService<ModelDocument> {
     if (!deletedModel) {
       throw new NotFoundException(ModelsErrors.MODEL_NOT_FOUND);
     }
+
+    await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);
 
     return deletedModel;
   }
