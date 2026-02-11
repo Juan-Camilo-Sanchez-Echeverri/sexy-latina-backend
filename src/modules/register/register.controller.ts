@@ -4,9 +4,12 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { ApiCreatedResponseWrapper, Public } from '@common/decorators';
 
+import { ClientResponse } from '@modules/clients/responses/client.response';
+
 import { RegisterService } from './register.service';
 
-import { RegisterModelDto } from './dto';
+import { RegisterModelDto, RegisterClientDto } from './dto';
+
 import { ModelResponse } from '../models/responses';
 
 @Public()
@@ -24,5 +27,16 @@ export class RegisterController {
   @ApiCreatedResponseWrapper(ModelResponse)
   async registerModel(@Body() registerModelDto: RegisterModelDto) {
     return this.registerService.registerModel(registerModelDto);
+  }
+
+  /**
+   * Register a new client
+   *
+   * @remarks Register a new client profile with the provided information.
+   */
+  @Post('clients')
+  @ApiCreatedResponseWrapper(ClientResponse)
+  async registerClient(@Body() registerClientDto: RegisterClientDto) {
+    return this.registerService.registerClient(registerClientDto);
   }
 }

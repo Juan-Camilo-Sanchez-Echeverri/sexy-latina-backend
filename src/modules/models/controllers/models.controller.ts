@@ -150,10 +150,8 @@ export class ModelsController {
     @Param('id') id: string,
     @Body() updateModelDto: UpdateModelDto,
   ) {
-    const [model, modelUpdated] = await Promise.all([
-      this.modelsService.findOneById(id),
-      this.modelsService.update(id, updateModelDto),
-    ]);
+    const model = await this.modelsService.findOneById(id);
+    const modelUpdated = await this.modelsService.update(id, updateModelDto);
 
     if (model.profilePhoto && updateModelDto.profilePhoto === null) {
       await this.storageService.deleteFile(model.profilePhoto, 'local');
