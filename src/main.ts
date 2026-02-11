@@ -20,7 +20,7 @@ import { envs, corsConfig, setupSwagger } from '@configs';
 
 import { getClassValidatorErrors } from '@common/helpers';
 
-const logger = new ConsoleLogger({ prefix: 'Erotic Site' });
+const logger = new ConsoleLogger({ prefix: 'Sexy Latina Backend' });
 
 async function bootstrap(): Promise<void> {
   /**
