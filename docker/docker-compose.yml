@@ -9,23 +9,8 @@ services:
       - ../.env
     volumes:
       - ../uploads:/app/uploads
-    networks:
-      - erotic_site
-
-  nginx:
-    container_name: nginx
-    restart: always
-    depends_on:
-      - backend
-    build:
-      context: ..
-      dockerfile: docker/nginx/Dockerfile
-    environment:
-      - PORT=${PORT}
     ports:
-      - '80:80'
-    volumes:
-      - ../uploads:/var/www/sexy-latina/uploads:ro
+      - '${PORT}:${PORT}'
     networks:
       - erotic_site
 
