@@ -88,7 +88,7 @@ export class AuthService {
       email,
       type: 'recoverPassword',
       expiresIn,
-      firstName: user.firstName,
+      firstName: user.firstName || '',
     });
 
     return { send: true };
@@ -107,7 +107,7 @@ export class AuthService {
       email,
       token,
       type: 'recoverPassword',
-      firstName: user.firstName,
+      firstName: user.firstName || '',
     });
 
     await this.usersService.update(String(user._id), {
@@ -152,7 +152,7 @@ export class AuthService {
       email,
       token,
       type: 'activeAccount',
-      firstName: user.firstName,
+      firstName: user.firstName || '',
     });
 
     await this.usersService.updateStatus(String(user._id), Status.ACTIVE);
@@ -174,7 +174,7 @@ export class AuthService {
       email,
       type: 'activeAccount',
       expiresIn,
-      firstName: user.firstName,
+      firstName: user.firstName || '',
     });
 
     return { send: true };

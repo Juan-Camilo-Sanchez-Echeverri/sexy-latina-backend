@@ -49,8 +49,8 @@ export class Model extends BaseSchema {
   /**
    * Age
    */
-  @Prop({ required: true })
-  age: number;
+  @Prop()
+  age?: number;
 
   /**
    * Portfolio of images/videos (URLs)
@@ -70,9 +70,8 @@ export class Model extends BaseSchema {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: City.name,
-    required: true,
   })
-  city: PopulatedEntity<CityDocument, '_id' | 'name'>;
+  city?: PopulatedEntity<CityDocument, '_id' | 'name'>;
 
   /**
    * Reference to state
@@ -80,9 +79,8 @@ export class Model extends BaseSchema {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: State.name,
-    required: true,
   })
-  state: PopulatedEntity<StateDocument, '_id' | 'name'>;
+  state?: PopulatedEntity<StateDocument, '_id' | 'name'>;
 
   /**
    * Reference to country
@@ -90,15 +88,14 @@ export class Model extends BaseSchema {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: Country.name,
-    required: true,
   })
-  country: PopulatedEntity<CountryDocument, '_id' | 'name'>;
+  country?: PopulatedEntity<CountryDocument, '_id' | 'name'>;
 
   /**
    * Nationality
    */
-  @Prop({ enum: Nationality, required: true })
-  nationality: Nationality;
+  @Prop({ enum: Nationality })
+  nationality?: Nationality;
 
   /**
    * Languages spoken

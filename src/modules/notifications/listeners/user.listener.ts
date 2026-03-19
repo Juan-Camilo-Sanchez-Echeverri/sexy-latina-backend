@@ -21,7 +21,7 @@ export class UserListener {
 
     await this.emailRequestService.create({
       email: user.email,
-      firstName: user.firstName,
+      firstName: user.firstName || '',
       type: 'activeAccount',
       expiresIn,
     });

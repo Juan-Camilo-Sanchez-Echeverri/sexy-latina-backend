@@ -29,13 +29,8 @@ export class RegisterService {
     try {
       const user = await this.usersService.create(
         {
-          firstName: registerModelDto.firstName,
-          lastName: registerModelDto.lastName,
           email: registerModelDto.email,
           password: registerModelDto.password,
-          document: registerModelDto.document,
-          documentType: registerModelDto.documentType,
-          phone: registerModelDto.phone,
           status: Status.INACTIVE,
           roles: [UserRole.MODEL],
         },
@@ -45,18 +40,6 @@ export class RegisterService {
       const model = await this.modelsService.create(
         {
           user: String(user._id),
-          age: registerModelDto.age,
-          city: registerModelDto.city,
-          state: registerModelDto.state,
-          country: registerModelDto.country,
-          socialLinks: registerModelDto.socialLinks,
-          availability: registerModelDto.availability,
-          services: registerModelDto.services,
-          nationality: registerModelDto.nationality,
-          languages: registerModelDto.languages,
-          categories: registerModelDto.categories,
-          description: registerModelDto.description,
-          height: registerModelDto.height,
         },
         session,
       );

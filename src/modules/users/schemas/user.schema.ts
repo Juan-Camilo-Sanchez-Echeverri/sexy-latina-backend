@@ -19,13 +19,13 @@ export class User extends BaseSchema {
    * First name of the user.
    */
   @Prop()
-  firstName: string;
+  firstName?: string;
 
   /**
    * Last name of the user.
    */
   @Prop()
-  lastName: string;
+  lastName?: string;
 
   /**
    * Password of the user used for authentication.
@@ -43,8 +43,8 @@ export class User extends BaseSchema {
   /**
    * Phone number of the user.
    */
-  @Prop({ required: true, unique: true })
-  phone: string;
+  @Prop({ unique: true })
+  phone?: string;
 
   /**
    * Type of document used for user identification.
@@ -53,18 +53,18 @@ export class User extends BaseSchema {
     enum: UserDocumentType,
     type: String,
   })
-  documentType: UserDocumentType;
+  documentType?: UserDocumentType;
 
   /**
    * Document number used for user identification.
    */
-  @Prop({ required: true, unique: true })
-  document: string;
+  @Prop({ unique: true })
+  document?: string;
 
   /**
    * Roles assigned to the user in the system.
    */
-  @Prop()
+  @Prop({ default: [] })
   roles: UserRole[];
 
   /**

@@ -3,10 +3,11 @@ import {
   IsArray,
   IsEmail,
   IsEnum,
-  IsNotEmpty,
+  IsOptional,
+  IsString,
 } from 'class-validator';
 
-import { IsNotBlank, IsPassword } from '@common/decorators';
+import { IsPassword } from '@common/decorators';
 
 import { Status, UserRole } from '@common/enums';
 
@@ -16,14 +17,16 @@ export class CreateUserDto {
   /**
    * The first name of the user
    */
-  @IsNotBlank()
-  readonly firstName: string;
+  @IsOptional()
+  @IsString()
+  readonly firstName?: string;
 
   /**
    * The last name of the user
    */
-  @IsNotBlank()
-  readonly lastName: string;
+  @IsOptional()
+  @IsString()
+  readonly lastName?: string;
 
   /**
    * The password of the user
@@ -40,34 +43,37 @@ export class CreateUserDto {
   /**
    * The phone of the user
    */
-  @IsNotBlank()
-  readonly phone: string;
+  @IsOptional()
+  @IsString()
+  readonly phone?: string;
 
   /**
    * The document number of the user
    */
-  @IsNotBlank()
-  readonly document: string;
+  @IsOptional()
+  @IsString()
+  readonly document?: string;
 
   /**
    * The document type of the user
    */
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(UserDocumentType)
-  readonly documentType: UserDocumentType;
+  readonly documentType?: UserDocumentType;
 
   /**
    * The role of the user
    */
+  @IsOptional()
   @IsArray()
-  @IsNotEmpty()
   @ArrayUnique()
   @IsEnum(UserRole, { each: true })
-  readonly roles: UserRole[];
+  readonly roles?: UserRole[];
 
   /**
    * The status of the user
    */
+  @IsOptional()
   @IsEnum(Status)
-  readonly status: Status;
+  readonly status?: Status;
 }
