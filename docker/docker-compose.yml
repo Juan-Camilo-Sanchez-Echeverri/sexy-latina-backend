@@ -10,7 +10,9 @@ services:
     volumes:
       - ../uploads:/app/uploads
     ports:
-      - '${PORT}:${PORT}'
+      - "127.0.0.1:${PORT}:${PORT}"
+    environment:
+      - TZ=America/Bogota
     networks:
       - erotic_site
 
