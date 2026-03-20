@@ -43,7 +43,7 @@ export class User extends BaseSchema {
   /**
    * Phone number of the user.
    */
-  @Prop({ unique: true })
+  @Prop()
   phone?: string;
 
   /**
@@ -58,7 +58,7 @@ export class User extends BaseSchema {
   /**
    * Document number used for user identification.
    */
-  @Prop({ unique: true })
+  @Prop()
   document?: string;
 
   /**
