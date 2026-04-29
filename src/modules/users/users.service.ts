@@ -28,8 +28,7 @@ export class UsersService implements ICrudService<UserDocument> {
 
     if (!existingUser) {
       await this.create({
-        firstName: envs.defaultUserFirstName,
-        lastName: envs.defaultUserLastName,
+        name: envs.defaultUserName,
         email: envs.defaultUserEmail,
         password: envs.defaultUserPassword,
         phone: envs.defaultUserPhone,
@@ -128,6 +127,15 @@ export class UsersService implements ICrudService<UserDocument> {
 
   async count(query: FilterUsersDto['data']): Promise<number> {
     return this.usersRepository.count(query);
+  }
+
+  async findIdsByName(name: string): Promise<string[]> {
+    const regex = new RegExp(name, 'i');
+    const users = await this.usersRepository.find(
+      { name: regex },
+      { _id: 1 },
+    );
+    return users.map((u) => u._id.toString());
   }
 
   async updateStatus(id: string, status: Status): Promise<UserDocument> {

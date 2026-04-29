@@ -1,21 +1,21 @@
 import { ValidationError } from 'class-validator';
 
-import { ValidationErrorItem } from '../interfaces/validation-error.interface';
+import { ValidationErrorDetails } from '../interfaces/validation-error.interface';
 
 export const getClassValidatorErrors = (
   validationErrors: ValidationError[],
   parentProperty = '',
-): ValidationErrorItem[] => {
-  const errors: ValidationErrorItem[] = [];
+): ValidationErrorDetails => {
+  const details: ValidationErrorDetails = {};
 
-  getValidationErrorsRecursively(validationErrors, errors, parentProperty);
+  collectErrors(validationErrors, details, parentProperty);
 
-  return errors;
+  return details;
 };
 
-const getValidationErrorsRecursively = (
+const collectErrors = (
   validationErrors: ValidationError[],
-  errors: ValidationErrorItem[],
+  details: ValidationErrorDetails,
   parentProperty = '',
 ): void => {
   for (const error of validationErrors) {
@@ -24,14 +24,11 @@ const getValidationErrorsRecursively = (
       : error.property;
 
     if (error.constraints) {
-      errors.push({
-        property: propertyPath,
-        errors: Object.values(error.constraints),
-      });
+      details[propertyPath] = Object.values(error.constraints);
     }
 
     if (error.children?.length) {
-      getValidationErrorsRecursively(error.children, errors, propertyPath);
+      collectErrors(error.children, details, propertyPath);
     }
   }
 };

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { ErrorsResponse } from '../responses/errors.response';
+import { ValidationErrorDetails } from '../interfaces/validation-error.interface';
 
 import { envs } from '@configs';
 
@@ -49,45 +50,60 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getResponse()
         : 'Internal server error';
 
-    const errorMessage = this.extractMessage(exception);
-    const errorCode = this.extractCode(exceptionResponse);
-    const errors = this.extractErrors(exceptionResponse);
+    const details = this.extractDetails(exceptionResponse);
+    const message = this.resolveMessage(exceptionResponse, details);
+    const code = this.extractCode(exceptionResponse, exception, details);
 
     const responseBody: ErrorsResponse = {
-      error: errorMessage,
-      code: errorCode,
+      code,
       status,
-      path: request.url,
-      details: errors,
+      message,
     };
 
     return response.status(status).json(responseBody);
   }
 
-  private extractMessage(exception: Error | HttpException): string {
-    return exception.constructor.name.replace('Exception', '');
-  }
-
-  private extractCode(response: string | object): number | null {
-    if (typeof response === 'object' && 'code' in response) {
-      return response.code as number;
+  private resolveMessage(response: string | object, details: ValidationErrorDetails): string {
+    const firstField = Object.keys(details)[0];
+    if (firstField) {
+      return details[firstField][0];
     }
-
-    return null;
-  }
-
-  private extractErrors(response: string | object): ErrorsResponse['details'] {
-    if (typeof response === 'object' && 'details' in response) {
-      return response.details as ErrorsResponse['details'];
-    }
-
-    let message: string;
     if (typeof response === 'object' && 'message' in response) {
-      message = response.message as string;
-    } else {
-      message = response as string;
+      return response.message as string;
+    }
+    return typeof response === 'string' ? response : 'Internal server error';
+  }
+
+  private extractDetails(response: string | object): ValidationErrorDetails {
+    if (typeof response === 'object' && 'details' in response) {
+      return response.details as ValidationErrorDetails;
+    }
+    return {};
+  }
+
+  private extractCode(
+    response: string | object,
+    exception: Error | HttpException,
+    details: ValidationErrorDetails,
+  ): string {
+    if (typeof response === 'object' && 'code' in response && response.code) {
+      return response.code as string;
     }
 
-    return [{ property: null, errors: [message] }];
+    const fields = Object.keys(details);
+    if (fields.length === 1) {
+      return `invalid-${this.toKebab(fields[0])}`;
+    }
+    if (fields.length > 1) {
+      return 'validation-error';
+    }
+
+    const name = exception.constructor.name.replace(/Exception$/, '');
+    if (name === 'Http') return 'internal-server-error';
+    return name.replace(/([A-Z])/g, (_, l, i) => (i > 0 ? '-' : '') + l.toLowerCase());
+  }
+
+  private toKebab(str: string): string {
+    return str.replace(/([A-Z])/g, '-$1').toLowerCase();
   }
 }

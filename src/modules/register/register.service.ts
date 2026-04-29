@@ -63,8 +63,7 @@ export class RegisterService {
     try {
       const user = await this.usersService.create(
         {
-          firstName: registerClientDto.firstName,
-          lastName: registerClientDto.lastName,
+          name: registerClientDto.name,
           email: registerClientDto.email,
           password: registerClientDto.password,
           document: registerClientDto.document,

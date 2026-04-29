@@ -1,10 +1,8 @@
-import { ErrorsResponse } from '@common/responses';
-
-const code = 3000;
+import { ServiceError } from '@common/responses';
 
 export const CountryErrors = {
   NOT_FOUND: {
-    code,
-    details: [{ property: null, errors: ['This country does not exist'] }],
+    code: 'country-not-found',
+    message: 'This country does not exist',
   },
-} as const satisfies Record<string, ErrorsResponse>;
+} as const satisfies Record<string, ServiceError>;

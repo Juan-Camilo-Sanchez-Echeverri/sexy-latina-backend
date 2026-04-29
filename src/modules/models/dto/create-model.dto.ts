@@ -120,4 +120,13 @@ export class CreateModelDto {
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
   readonly height?: number;
+
+  /**
+   * Weight in kilograms
+   *
+   * @example 60
+   */
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  readonly weight?: number;
 }

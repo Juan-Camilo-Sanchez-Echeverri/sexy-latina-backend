@@ -5,9 +5,10 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
+  Put,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
 } from '@nestjs/common';
 
@@ -30,7 +31,7 @@ import { OwnModelGuard } from '../guards';
 
 import { ModelsService } from '../models.service';
 
-import { CreatePortafolioItemDto, UploadProfilePhotoDto } from '../dto';
+import { CreatePortfolioItemDto, UploadProfilePhotoDto } from '../dto';
 
 import { ModelsErrors } from '../errors/models.errors';
 
@@ -53,7 +54,7 @@ export class ModelsFilesController {
    * The uploaded file must be an image (JPEG or PNG) and should not exceed 5 MB in size.
    *
    */
-  @Patch(':id/profile-photo')
+  @Put(':id/profile-photo')
   @AllRoles()
   @UseGuards(OwnModelGuard)
   @ApiConsumes('multipart/form-data')
@@ -93,47 +94,56 @@ export class ModelsFilesController {
   }
 
   /**
-   * Adds a new item to the model's portafolio.
+   * Adds a new item to the model's portfolio.
    *
-   * @remarks This method allows a model to add an item to its portafolio.
+   * @remarks This method allows a model to add an item to its portfolio.
    *
    */
-  @Post(':id/portafolio')
+  @Post(':id/portfolio')
   @AllRoles()
   @UseGuards(OwnModelGuard)
   @ApiCreatedResponseWrapper(ModelResponse)
   @ApiBadRequestResponseWrapper(ModelsErrors.IMAGE_FILE_REQUIRED)
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: CreatePortafolioItemDto })
+  @ApiBody({ type: CreatePortfolioItemDto })
   @UploadInterceptor({
-    type: 'single',
-    fieldName: 'image',
+    type: 'multiple',
+    fieldName: 'images',
     maxSizeMB: 5,
+    maxCount: 10,
     allowedMimeTypes: ['image/jpeg', 'image/png', 'video/mp4'],
   })
   async addPortafolioItem(
     @Param('id') id: string,
-    @UploadedFile() image?: Express.Multer.File,
+    @UploadedFiles() images?: Express.Multer.File[],
   ) {
-    if (!image) throw new BadRequestException(ModelsErrors.IMAGE_FILE_REQUIRED);
+    if (!images?.length) throw new BadRequestException(ModelsErrors.IMAGE_FILE_REQUIRED);
 
-    const folder = `uploads/models/${id}/portafolio`;
-    const path = await this.storageService.saveFile(image, folder, 'local');
+    const folder = `uploads/models/${id}/portfolio`;
 
-    return await this.modelsService.addPortafolioItem(id, { url: path });
+    const savedPaths = await Promise.all(
+      images.map((image) => this.storageService.saveFile(image, folder, 'local')),
+    );
+
+    let model: any;
+    for (const url of savedPaths) {
+      model = await this.modelsService.addPortafolioItem(id, { url });
+    }
+
+    return model;
   }
 
   /**
-   * Updates an existing portafolio item for the model.
+   * Updates an existing portfolio item for the model.
    *
-   * @remarks This method allows a model to update an item in its portafolio.
+   * @remarks This method allows a model to update an item in its portfolio.
    *
    */
-  @Patch(':id/gallery/:itemId')
+  @Put(':id/portfolio/:itemId')
   @AllRoles()
   @UseGuards(OwnModelGuard)
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: CreatePortafolioItemDto })
+  @ApiBody({ type: CreatePortfolioItemDto })
   @ApiBadRequestResponseWrapper(ModelsErrors.IMAGE_FILE_REQUIRED)
   @ApiOkResponseWrapper(ModelResponse, { isPaginate: false })
   @UploadInterceptor({
@@ -152,7 +162,7 @@ export class ModelsFilesController {
     const item = await this.modelsService.getItemPortafolio(id, itemId);
 
     await this.storageService.deleteFile(item.url, 'local');
-    const folder = `uploads/models/${id}/portafolio`;
+    const folder = `uploads/models/${id}/portfolio`;
     item.url = await this.storageService.saveFile(image, folder, 'local');
 
     return await this.modelsService.updatePortafolioItem(id, {
@@ -162,12 +172,12 @@ export class ModelsFilesController {
   }
 
   /**
-   * Deletes a portafolio item from the model.
+   * Deletes a portfolio item from the model.
    *
-   * @remarks This method allows a model to delete an item from its portafolio.
+   * @remarks This method allows a model to delete an item from its portfolio.
    *
    */
-  @Delete(':id/portafolio/:itemId')
+  @Delete(':id/portfolio/:itemId')
   @AllRoles()
   @ApiNoContentResponseWrapper()
   @UseGuards(OwnModelGuard)

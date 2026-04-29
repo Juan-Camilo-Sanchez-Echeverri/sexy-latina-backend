@@ -1,15 +1,9 @@
-import { ErrorsResponse } from '@common/responses';
-
-const code = 4000;
+import { ServiceError } from '@common/responses';
 
 export const CityErrors = {
   STATE_ERR: {
-    code,
-    details: [
-      {
-        property: null,
-        errors: ['The state does not belong to the country'],
-      },
-    ],
+    code: 'invalid-state',
+    message: 'The state does not belong to the country',
+    details: { state: ['The state does not belong to the country'] },
   },
-} as const satisfies Record<string, ErrorsResponse>;
+} as const satisfies Record<string, ServiceError>;

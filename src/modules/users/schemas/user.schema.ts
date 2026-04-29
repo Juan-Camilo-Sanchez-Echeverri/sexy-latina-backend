@@ -15,17 +15,8 @@ export type UserDocument = HydratedDocument<User>;
   strictQuery: 'throw',
 })
 export class User extends BaseSchema {
-  /**
-   * First name of the user.
-   */
   @Prop()
-  firstName?: string;
-
-  /**
-   * Last name of the user.
-   */
-  @Prop()
-  lastName?: string;
+  name?: string;
 
   /**
    * Password of the user used for authentication.

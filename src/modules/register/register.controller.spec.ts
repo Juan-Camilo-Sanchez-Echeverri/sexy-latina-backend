@@ -8,7 +8,7 @@ describe('RegisterController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RegisterController],
-      providers: [RegisterService],
+      providers: [{ provide: RegisterService, useValue: {} }],
     }).compile();
 
     controller = module.get<RegisterController>(RegisterController);

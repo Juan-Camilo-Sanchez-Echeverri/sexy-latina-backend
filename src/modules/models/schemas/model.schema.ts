@@ -23,7 +23,7 @@ import {
 
 import { ServicePrice, ServicePriceSchema } from './service-price.schema';
 import { SocialLinks, SocialLinksSchema } from './social-links.schema';
-import { PortafolioItem, PortafolioItemSchema } from './portafolio-item.schema';
+import { PortfolioItem, PortfolioItemSchema } from './portfolio-item.schema';
 
 @Schema({
   timestamps: true,
@@ -41,10 +41,7 @@ export class Model extends BaseSchema {
     required: true,
     unique: true,
   })
-  user: PopulatedEntity<
-    UserDocument,
-    '_id' | 'firstName' | 'lastName' | 'phone'
-  >;
+  user: PopulatedEntity<UserDocument, '_id' | 'name' | 'phone'>;
 
   /**
    * Age
@@ -55,8 +52,8 @@ export class Model extends BaseSchema {
   /**
    * Portfolio of images/videos (URLs)
    */
-  @Prop({ type: [PortafolioItemSchema], default: [] })
-  portafolio: PortafolioItem[];
+  @Prop({ type: [PortfolioItemSchema], default: [] })
+  portfolio: PortfolioItem[];
 
   /**
    * List of services offered with prices
@@ -94,7 +91,7 @@ export class Model extends BaseSchema {
   /**
    * Nationality
    */
-  @Prop({ enum: Nationality })
+  @Prop({ type: String, enum: Nationality })
   nationality?: Nationality;
 
   /**
@@ -138,10 +135,19 @@ export class Model extends BaseSchema {
   height: number;
 
   /**
+   * Weight in kilograms
+   */
+  @Prop()
+  weight: number;
+
+  /**
    * Whether the model is verified
    */
   @Prop({ default: false })
   verified: boolean;
+
+  @Prop({ default: true })
+  isActive: boolean;
 
   /**
    * Image profile
@@ -153,7 +159,7 @@ export class Model extends BaseSchema {
 export const ModelSchema = SchemaFactory.createForClass(Model);
 
 export type ModelDocumentOverride = {
-  portafolio: Types.DocumentArray<PortafolioItem>;
+  portfolio: Types.DocumentArray<PortfolioItem>;
 };
 
 export type ModelDocument = HydratedDocument<Model, ModelDocumentOverride>;
@@ -162,6 +168,7 @@ ModelSchema.index({ categories: 1 });
 ModelSchema.index({ city: 1 });
 ModelSchema.index({ state: 1 });
 ModelSchema.index({ country: 1 });
+ModelSchema.index({ isActive: 1 });
 ModelSchema.index({ status: 1 });
 ModelSchema.index({ verified: 1 });
 ModelSchema.index({ nationality: 1 });

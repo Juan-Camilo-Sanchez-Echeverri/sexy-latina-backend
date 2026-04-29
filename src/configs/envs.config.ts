@@ -30,14 +30,13 @@ interface EnvVars {
   JWT_EXPIRATION: string;
 
   USER_NOTIFICATIONS: string;
-  PASSWORD_NOTIFICATIONS: string;
+  EMAIL_SERVICE_URL: string;
 
   REDIS_PASSWORD: string;
   REDIS_HOST: string;
   REDIS_PORT: number;
 
-  DEFAULT_USER_FIRST_NAME: string;
-  DEFAULT_USER_LAST_NAME: string;
+  DEFAULT_USER_NAME: string;
   DEFAULT_USER_EMAIL: string;
   DEFAULT_USER_PHONE: string;
   DEFAULT_USER_DOCUMENT: string;
@@ -63,14 +62,13 @@ const envSchema = joi
     JWT_EXPIRATION: joi.string().required(),
 
     USER_NOTIFICATIONS: joi.string().required(),
-    PASSWORD_NOTIFICATIONS: joi.string().required(),
+    EMAIL_SERVICE_URL: joi.string().uri().required(),
 
-    REDIS_PASSWORD: joi.string().required(),
+    REDIS_PASSWORD: joi.string().allow('').optional(),
     REDIS_HOST: joi.string().required(),
     REDIS_PORT: joi.number().required(),
 
-    DEFAULT_USER_FIRST_NAME: joi.string().required(),
-    DEFAULT_USER_LAST_NAME: joi.string().required(),
+    DEFAULT_USER_NAME: joi.string().required(),
     DEFAULT_USER_EMAIL: joi.string().required(),
     DEFAULT_USER_PHONE: joi.string().required(),
     DEFAULT_USER_DOCUMENT: joi.string().required(),
@@ -107,14 +105,13 @@ export const envs = {
   jwtExpiration: envVars.JWT_EXPIRATION,
 
   userNotifications: envVars.USER_NOTIFICATIONS,
-  passwordNotifications: envVars.PASSWORD_NOTIFICATIONS,
+  emailServiceUrl: envVars.EMAIL_SERVICE_URL,
 
   redisPassword: envVars.REDIS_PASSWORD,
   redisHost: envVars.REDIS_HOST,
   redisPort: envVars.REDIS_PORT,
 
-  defaultUserFirstName: envVars.DEFAULT_USER_FIRST_NAME,
-  defaultUserLastName: envVars.DEFAULT_USER_LAST_NAME,
+  defaultUserName: envVars.DEFAULT_USER_NAME,
   defaultUserEmail: envVars.DEFAULT_USER_EMAIL,
   defaultUserPhone: envVars.DEFAULT_USER_PHONE,
   defaultUserDocument: envVars.DEFAULT_USER_DOCUMENT,

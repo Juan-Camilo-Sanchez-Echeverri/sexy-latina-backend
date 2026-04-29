@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { JwtService } from '@nestjs/jwt';
 
@@ -88,7 +92,7 @@ export class AuthService {
       email,
       type: 'recoverPassword',
       expiresIn,
-      firstName: user.firstName || '',
+      name: user.name || '',
     });
 
     return { send: true };
@@ -107,7 +111,7 @@ export class AuthService {
       email,
       token,
       type: 'recoverPassword',
-      firstName: user.firstName || '',
+      name: user.name || '',
     });
 
     await this.usersService.update(String(user._id), {
@@ -146,13 +150,20 @@ export class AuthService {
 
     const user = await this.usersService.findOneBy({ email });
 
-    if (!user || user.status === Status.ACTIVE) return { active: false };
+    if (!user) throw new UnauthorizedException(AuthErrors.USER_NOT_FOUND);
+
+    if (user.status === Status.ACTIVE) {
+      throw new ConflictException({
+        code: 'account-already-active',
+        message: 'This account is already active.',
+      });
+    }
 
     await this.emailRequestService.validate({
       email,
       token,
       type: 'activeAccount',
-      firstName: user.firstName || '',
+      name: user.name || '',
     });
 
     await this.usersService.updateStatus(String(user._id), Status.ACTIVE);
@@ -165,16 +176,23 @@ export class AuthService {
   ): Promise<RequestActivateAccountResponse> {
     const user = await this.usersService.findOneBy({ email });
 
-    if (!user) return { send: false };
+    if (!user) throw new UnauthorizedException(AuthErrors.EMAIL_NOT_FOUND);
 
-    if (user.status === Status.ACTIVE) return { send: false };
+    if (user.status === Status.ACTIVE) {
+      throw new ConflictException({
+        code: 'account-already-active',
+        message: 'This account is already active.',
+      });
+    }
 
-    const expiresIn = new Date(Date.now() + 60 * 60 * 1000);
+    const currentDate = DateHelper.getCurrentDate();
+    const expiresIn = DateHelper.add(currentDate, 1, 'hour');
+
     await this.emailRequestService.create({
       email,
       type: 'activeAccount',
       expiresIn,
-      firstName: user.firstName || '',
+      name: user.name || '',
     });
 
     return { send: true };

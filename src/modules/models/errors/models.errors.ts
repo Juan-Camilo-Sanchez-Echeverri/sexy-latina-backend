@@ -1,51 +1,32 @@
-import { ErrorsResponse } from '@common/responses';
-
-const code = 6000;
+import { ServiceError } from '@common/responses';
 
 export const ModelsErrors = {
   MODEL_NOT_FOUND: {
-    code: code,
-    details: [
-      {
-        property: null,
-        errors: ['Model not found.'],
-      },
-    ],
+    code: 'model-not-found',
+    message: 'Model not found.',
   },
   USER_IS_NOT_A_MODEL: {
-    code: code + 1,
-    details: [
-      {
-        property: 'user',
-        errors: ['The user is not a model.'],
-      },
-    ],
+    code: 'invalid-user',
+    message: 'The user is not a model.',
+    details: { user: ['The user is not a model.'] },
   },
-  PORTAFOLIO_ITEM_NOT_FOUND: {
-    code: code + 2,
-    details: [
-      {
-        property: 'portafolio',
-        errors: ['Portafolio item not found.'],
-      },
-    ],
+  PORTFOLIO_ITEM_NOT_FOUND: {
+    code: 'portfolio-item-not-found',
+    message: 'Portfolio item not found.',
+    details: { portfolio: ['Portfolio item not found.'] },
   },
   PROFILE_PHOTO_REQUIRED: {
-    code: code + 3,
-    details: [
-      {
-        property: 'profilePhoto',
-        errors: ['profilePhoto file is required'],
-      },
-    ],
+    code: 'invalid-profile-photo',
+    message: 'profilePhoto file is required',
+    details: { profilePhoto: ['profilePhoto file is required'] },
   },
   IMAGE_FILE_REQUIRED: {
-    code: code + 4,
-    details: [
-      {
-        property: 'image',
-        errors: ['image file is required'],
-      },
-    ],
+    code: 'invalid-image',
+    message: 'image file is required',
+    details: { image: ['image file is required'] },
   },
-} as const satisfies Record<string, ErrorsResponse>;
+  USER_ALREADY_HAS_CLIENT: {
+    code: 'user-already-has-client',
+    message: 'This user already has a client profile.',
+  },
+} as const satisfies Record<string, ServiceError>;

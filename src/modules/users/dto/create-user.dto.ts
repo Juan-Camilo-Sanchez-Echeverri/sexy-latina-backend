@@ -14,19 +14,9 @@ import { Status, UserRole } from '@common/enums';
 import { UserDocumentType } from '../enums/user-document-type.enum';
 
 export class CreateUserDto {
-  /**
-   * The first name of the user
-   */
   @IsOptional()
   @IsString()
-  readonly firstName?: string;
-
-  /**
-   * The last name of the user
-   */
-  @IsOptional()
-  @IsString()
-  readonly lastName?: string;
+  readonly name?: string;
 
   /**
    * The password of the user

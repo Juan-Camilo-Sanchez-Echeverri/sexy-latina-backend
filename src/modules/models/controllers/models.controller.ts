@@ -6,7 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
+  Put,
   Post,
   Query,
   UseGuards,
@@ -21,7 +21,6 @@ import {
   ApiNotFoundResponseWrapper,
   ApiOkResponseWrapper,
   ApiValidationResponseWrapper,
-  Public,
   ApiNoContentResponseWrapper,
   Roles,
   ApiCreatedResponseWrapper,
@@ -88,21 +87,6 @@ export class ModelsController {
   }
 
   /**
-   * Get all models
-   *
-   * @remarks Retrieve all verified model profiles with pagination.
-   *
-   */
-  @Get('/public')
-  @Public()
-  @ApiOkResponseWrapper(ModelResponse, { isPaginate: true })
-  async findAllPublic(@Query() params: FilterModelDto) {
-    params.data = { verified: true, ...params.data };
-    const cacheKey = this.createCacheKey();
-    return await this.modelsService.findPaginate(params, cacheKey);
-  }
-
-  /**
    * Get my model profile
    *
    * @remarks Retrieve the model profile of the authenticated user.
@@ -119,27 +103,14 @@ export class ModelsController {
   }
 
   /**
-   * Get a model by id
-   *
-   * @remarks Retrieve a specific model profile by its id.
-   *
-   */
-  @Public()
-  @Get(':id')
-  @ApiOkResponseWrapper(ModelResponse, { isPaginate: false })
-  @ApiNotFoundResponseWrapper(ModelsErrors.MODEL_NOT_FOUND)
-  async findOne(@Param('id') id: string) {
-    return await this.modelsService.findOneById(id);
-  }
-
-  /**
    * Update a model profile
    *
    *
    * @remarks Update the model profile of the authenticated user.
    *
    */
-  @Patch(':id')
+  @Put(':id')
+  @AllRoles()
   @ApiBearerAuth()
   @ApiAuthResponses()
   @UseGuards(OwnModelGuard)
@@ -161,12 +132,28 @@ export class ModelsController {
   }
 
   /**
+   * Verify a model profile
+   *
+   * @remarks Mark a model as verified. Only accessible by ADMIN.
+   *
+   */
+  @Put(':id/verify')
+  @ApiBearerAuth()
+  @ApiAuthResponses()
+  @ApiOkResponseWrapper(ModelResponse, { isPaginate: false })
+  @ApiNotFoundResponseWrapper(ModelsErrors.MODEL_NOT_FOUND)
+  async verify(@Param('id') id: string) {
+    return await this.modelsService.verify(id);
+  }
+
+  /**
    * Delete a model profile
    *
    * @remarks Delete the model profile of the authenticated user.
    *
    */
   @Delete(':id')
+  @AllRoles()
   @ApiBearerAuth()
   @ApiAuthResponses()
   @ApiNoContentResponseWrapper()

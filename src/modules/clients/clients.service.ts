@@ -1,10 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 
 import { ClientSession, PaginateResult, PopulateOptions } from 'mongoose';
+
+import { Inject, forwardRef } from '@nestjs/common';
 
 import { ICrudService } from '@common/interfaces';
 
 import { CacheService } from '@modules/cache/cache.service';
+import { ModelsService } from '@modules/models/models.service';
 
 import { CreateClientDto, FilterClientsDto, UpdateClientDto } from './dto';
 
@@ -21,20 +24,31 @@ export class ClientsService implements ICrudService<ClientDocument> {
   constructor(
     private readonly clientsRepository: ClientsRepository,
     private readonly cacheService: CacheService,
+    @Inject(forwardRef(() => ModelsService))
+    private readonly modelsService: ModelsService,
   ) {}
 
   private readonly pathsPopulate: PopulateOptions[] = [
     { path: 'city', select: 'name' },
     { path: 'state', select: 'name' },
     { path: 'country', select: 'name' },
-    { path: 'user', select: 'firstName lastName phone' },
+    { path: 'user', select: 'name phone' },
   ];
+
+  async findOneByUser(userId: string): Promise<ClientDocument | null> {
+    return this.clientsRepository.findOne({ user: userId });
+  }
 
   async create(
     createClientDto: CreateClientDto,
     session?: ClientSession,
   ): Promise<ClientDocument> {
     const { user, city, state, country } = createClientDto;
+
+    const existingModel = await this.modelsService.findOneByUser(user);
+    if (existingModel) {
+      throw new ConflictException(ClientsErrors.USER_ALREADY_HAS_MODEL);
+    }
 
     const client = await this.clientsRepository.create(
       {

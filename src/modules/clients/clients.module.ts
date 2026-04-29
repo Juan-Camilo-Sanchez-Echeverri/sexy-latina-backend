@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { UsersModule } from '@modules/users/users.module';
+import { ModelsModule } from '@modules/models/models.module';
 
 import { ClientsController } from './clients.controller';
 
@@ -21,6 +22,7 @@ import { Client, ClientSchema } from './schemas/client.schema';
       },
     ]),
     UsersModule,
+    forwardRef(() => ModelsModule),
   ],
   providers: [ClientsService, ClientsRepository],
   controllers: [ClientsController],

@@ -9,8 +9,7 @@ import { Client } from '../schemas/client.schema';
 
 class UserResponseClient extends PickType(UserResponse, [
   '_id',
-  'firstName',
-  'lastName',
+  'name',
   'phone',
 ] as const) {}
 

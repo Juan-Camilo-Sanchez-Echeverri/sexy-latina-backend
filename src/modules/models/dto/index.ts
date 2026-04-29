@@ -1,6 +1,6 @@
 export * from './availability-schedule.dto';
 export * from './create-model.dto';
-export * from './create-portafolio-item.dto';
+export * from './create-portfolio-item.dto';
 export * from './filter-model.dto';
 export * from './service-price.dto';
 export * from './social-links.dto';

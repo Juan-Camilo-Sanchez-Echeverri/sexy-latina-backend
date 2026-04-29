@@ -27,10 +27,7 @@ export class Client extends BaseSchema {
     required: true,
     unique: true,
   })
-  user: PopulatedEntity<
-    UserDocument,
-    '_id' | 'firstName' | 'lastName' | 'phone'
-  >;
+  user: PopulatedEntity<UserDocument, '_id' | 'name' | 'phone'>;
 
   /**
    * Profile image path

@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 
 import {
   ConsoleLogger,
-  UnprocessableEntityException,
+  BadRequestException,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
@@ -66,11 +66,10 @@ async function bootstrap(): Promise<void> {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-      exceptionFactory: (validationErrors): UnprocessableEntityException => {
-        const message = 'Validation failed';
+      exceptionFactory: (validationErrors): BadRequestException => {
         const details = getClassValidatorErrors(validationErrors);
 
-        return new UnprocessableEntityException({ message, details });
+        return new BadRequestException({ message: 'Validation failed', details });
       },
     }),
   );
@@ -83,7 +82,7 @@ async function bootstrap(): Promise<void> {
   app.enableVersioning({
     type: VersioningType.URI,
     prefix: 'v',
-    defaultVersion: '1.0',
+    defaultVersion: '1',
   });
 
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {

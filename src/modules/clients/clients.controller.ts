@@ -7,7 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Patch,
+  Put,
   Post,
   Query,
   UploadedFile,
@@ -110,7 +110,7 @@ export class ClientsController {
    *
    * @remarks Update the client profile data.
    */
-  @Patch(':id')
+  @Put(':id')
   @AllRoles()
   @UseGuards(OwnClientGuard)
   @ApiNotFoundResponseWrapper(ClientsErrors.NOT_FOUND)
@@ -150,7 +150,7 @@ export class ClientsController {
    * @remarks Upload a profile photo for the given client id. If a photo
    * already exists it will be deleted before saving the new one.
    */
-  @Patch(':id/profile-photo')
+  @Put(':id/profile-photo')
   @AllRoles()
   @UseGuards(OwnClientGuard)
   @ApiConsumes('multipart/form-data')

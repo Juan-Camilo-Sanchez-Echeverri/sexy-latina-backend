@@ -9,8 +9,8 @@ import { Model } from '../schemas/model.schema';
 
 class UserResponseModel extends PickType(UserResponse, [
   '_id',
-  'firstName',
-  'lastName',
+  'name',
+  'email',
   'phone',
 ] as const) {}
 
