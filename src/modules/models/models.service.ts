@@ -1,11 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 
-import { PopulateOptions, PaginateResult } from 'mongoose';
+import { Inject, forwardRef } from '@nestjs/common';
+
+import { PopulateOptions, PaginateResult, ClientSession, QueryFilter } from 'mongoose';
 
 import { ICrudService } from '@common/interfaces';
 
-import { UserRole } from '@common/enums';
-
+import { CacheService } from '@modules/cache/cache.service';
+import { ClientsService } from '@modules/clients/clients.service';
 import { UsersService } from '@modules/users/users.service';
 
 import { CreateModelDto, FilterModelDto, UpdateModelDto } from './dto';
@@ -16,50 +18,104 @@ import { ModelDocument } from './schemas/model.schema';
 
 import { ModelsErrors } from './errors/models.errors';
 
+import { ROOT_PREFIX_MODELS } from './constants/models.constants';
+
 @Injectable()
 export class ModelsService implements ICrudService<ModelDocument> {
   private readonly pathsPopulate: PopulateOptions[] = [
     { path: 'city', select: 'name' },
     { path: 'state', select: 'name' },
     { path: 'country', select: 'name' },
-    { path: 'user', select: 'firstName lastName phone' },
+    { path: 'user', select: 'name email phone' },
   ];
 
   constructor(
     private readonly modelsRepository: ModelsRepository,
+    private readonly cacheService: CacheService,
     private readonly usersService: UsersService,
+    @Inject(forwardRef(() => ClientsService))
+    private readonly clientsService: ClientsService,
   ) {}
 
-  async create(createModelDto: CreateModelDto): Promise<ModelDocument> {
-    const { user, city, state, country, ...rest } = createModelDto;
+  async findOneByUser(userId: string): Promise<ModelDocument | null> {
+    return this.modelsRepository.findOne({ user: userId });
+  }
 
-    const userExists = await this.usersService.findOneBy({
-      _id: user,
-      roles: { $in: [UserRole.MODEL] },
-    });
+  async create(
+    createModelDto: CreateModelDto,
+    session?: ClientSession,
+  ): Promise<ModelDocument> {
+    const { user, city, state, country } = createModelDto;
 
-    if (!userExists) {
-      throw new NotFoundException(ModelsErrors.USER_IS_NOT_A_MODEL);
+    const existingClient = await this.clientsService.findOneByUser(user);
+    if (existingClient) {
+      throw new ConflictException(ModelsErrors.USER_ALREADY_HAS_CLIENT);
     }
 
-    const newModel = await this.modelsRepository.create({
-      ...rest,
-      user: user as unknown as ModelDocument['user'],
-      city: city as unknown as ModelDocument['city'],
-      state: state as unknown as ModelDocument['state'],
-      country: country as unknown as ModelDocument['country'],
-    });
+    const newModel = await this.modelsRepository.create(
+      {
+        ...createModelDto,
+        user: user as unknown as ModelDocument['user'],
+        city: city as unknown as ModelDocument['city'],
+        state: state as unknown as ModelDocument['state'],
+        country: country as unknown as ModelDocument['country'],
+      },
+      session,
+    );
+
+    await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);
 
     return this.populateModel(newModel);
   }
 
   async findPaginate(
     filter: FilterModelDto,
+    cacheKey: string,
   ): Promise<PaginateResult<ModelDocument>> {
-    return await this.modelsRepository.findPaginate(filter, {
+    const cached =
+      await this.cacheService.get<PaginateResult<ModelDocument>>(cacheKey);
+
+    if (cached) return cached;
+
+    filter.data = await this.buildFilterData(filter);
+
+    const models = await this.modelsRepository.findPaginate(filter, {
       populate: this.pathsPopulate,
       sort: { createdAt: -1 },
     });
+
+    await this.cacheService.set(cacheKey, models);
+
+    return models;
+  }
+
+  private async buildFilterData(
+    params: FilterModelDto,
+  ): Promise<QueryFilter<ModelDocument>> {
+    const filter: QueryFilter<ModelDocument> = { ...params.data };
+
+    if (params.verified !== undefined) filter.verified = params.verified;
+    if (params.isActive !== undefined) (filter as any).isActive = params.isActive;
+    if (params.nationality) filter.nationality = params.nationality;
+    if (params.category) (filter as any).categories = params.category;
+    if (params.language) (filter as any).languages = params.language;
+    if (params.city) (filter as any).city = params.city;
+    if (params.state) (filter as any).state = params.state;
+    if (params.country) (filter as any).country = params.country;
+
+    if (params.minAge !== undefined || params.maxAge !== undefined) {
+      const ageFilter: Record<string, number> = {};
+      if (params.minAge !== undefined) ageFilter.$gte = params.minAge;
+      if (params.maxAge !== undefined) ageFilter.$lte = params.maxAge;
+      (filter as any).age = ageFilter;
+    }
+
+    if (params.name) {
+      const userIds = await this.usersService.findIdsByName(params.name);
+      (filter as any).user = { $in: userIds };
+    }
+
+    return filter;
   }
 
   async findOneById(id: string): Promise<ModelDocument> {
@@ -70,18 +126,35 @@ export class ModelsService implements ICrudService<ModelDocument> {
     return this.populateModel(model);
   }
 
+  async findOneByUserId(userId: string): Promise<ModelDocument> {
+    const model = await this.modelsRepository.findOne({ user: userId });
+
+    if (!model) throw new NotFoundException(ModelsErrors.MODEL_NOT_FOUND);
+
+    return this.populateModel(model);
+  }
+
   async update(
     id: string,
     updateModelDto: UpdateModelDto,
   ): Promise<ModelDocument> {
+    const { user: userUpdate, ...modelData } = updateModelDto;
+
     const updatedModel = await this.modelsRepository.findByIdAndUpdate(
       id,
-      updateModelDto,
+      modelData,
     );
 
     if (!updatedModel) {
       throw new NotFoundException(ModelsErrors.MODEL_NOT_FOUND);
     }
+
+    if (userUpdate) {
+      const userId = (updatedModel.user as any)?._id ?? updatedModel.user;
+      await this.usersService.update(userId.toString(), userUpdate);
+    }
+
+    await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);
 
     return this.populateModel(updatedModel);
   }
@@ -93,7 +166,75 @@ export class ModelsService implements ICrudService<ModelDocument> {
       throw new NotFoundException(ModelsErrors.MODEL_NOT_FOUND);
     }
 
+    await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);
+
     return deletedModel;
+  }
+
+  async verify(id: string): Promise<ModelDocument> {
+    const updatedModel = await this.modelsRepository.findByIdAndUpdate(id, {
+      verified: true,
+    });
+
+    if (!updatedModel) {
+      throw new NotFoundException(ModelsErrors.MODEL_NOT_FOUND);
+    }
+
+    await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);
+
+    return this.populateModel(updatedModel);
+  }
+
+  async getItemPortafolio(id: string, itemId: string) {
+    const model = await this.findOneById(id);
+    const item = model.portfolio.id(itemId);
+
+    if (!item) {
+      throw new NotFoundException(ModelsErrors.PORTFOLIO_ITEM_NOT_FOUND);
+    }
+
+    return item;
+  }
+
+  async addPortafolioItem(
+    id: string,
+    item: { url: string },
+  ): Promise<ModelDocument> {
+    const updatedModel = await this.modelsRepository.findByIdAndUpdate(id, {
+      $push: { portfolio: item },
+    });
+
+    if (!updatedModel) {
+      throw new NotFoundException(ModelsErrors.MODEL_NOT_FOUND);
+    }
+
+    return this.populateModel(updatedModel);
+  }
+
+  async updatePortafolioItem(
+    id: string,
+    item: { _id: string; url: string },
+  ): Promise<ModelDocument> {
+    const modelUpdated = await this.modelsRepository.findOneAndUpdate(
+      { _id: id, 'portfolio._id': item._id },
+      { $set: { 'portfolio.$.url': item.url } },
+    );
+
+    if (!modelUpdated) {
+      throw new NotFoundException(ModelsErrors.PORTFOLIO_ITEM_NOT_FOUND);
+    }
+
+    return this.populateModel(modelUpdated);
+  }
+
+  async deletePortafolioItem(id: string, itemId: string) {
+    const item = await this.getItemPortafolio(id, itemId);
+
+    await this.modelsRepository.findByIdAndUpdate(id, {
+      $pull: { portfolio: { _id: itemId } },
+    });
+
+    return item.url;
   }
 
   private async populateModel(doc: ModelDocument): Promise<ModelDocument> {

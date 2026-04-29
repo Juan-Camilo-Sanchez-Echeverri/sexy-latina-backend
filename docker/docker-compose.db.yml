@@ -1,49 +1,30 @@
 services:
   mongodb-primary:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: mongodb-primary
     restart: always
-    command: ['--replSet', 'rs0', '--port', '27017']
     ports:
-      - 27017:27017
-    healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb-primary:27017',priority:1},{_id:1,host:'mongodb-secondary-1:27018',priority:0.5},{_id:2,host:'mongodb-secondary-2:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
-      interval: 5s
-      timeout: 30s
-      start_period: 0s
-      start_interval: 1s
-      retries: 30
+      - "27017:27017"
     volumes:
       - '../mongo/mongodb-primary/db:/data/db'
-      - '../mongo/mongodb-primary/configdb:/data/configdb'
     networks:
       - erotic_site
-
-  mongodb-secondary-1:
-    image: mongo:latest
-    container_name: mongodb-secondary-1
-    restart: always
-    command: ['--replSet', 'rs0', '--port', '27018']
-    ports:
-      - 27018:27018
-    volumes:
-      - '../mongo/mongodb-secondary-1/db:/data/db'
-      - '../mongo/mongodb-secondary-1/configdb:/data/configdb'
-    networks:
-      - erotic_site
-
-  mongodb-secondary-2:
-    image: mongo:latest
-    container_name: mongodb-secondary-2
-    restart: always
-    command: ['--replSet', 'rs0', '--port', '27019']
-    ports:
-      - 27019:27019
-    volumes:
-      - '../mongo/mongodb-secondary-2/db:/data/db'
-      - '../mongo/mongodb-secondary-2/configdb:/data/configdb'
-    networks:
-      - erotic_site
+    command: >
+      bash -c "
+        mongod --replSet rs0 --bind_ip_all &
+        echo 'Esperando Mongo...'
+        until mongo --eval 'print(\"ready\")' >/dev/null 2>&1; do
+          sleep 2
+        done
+        echo 'Inicializando replica set...'
+        mongo --eval '
+          rs.initiate({
+            _id: \"rs0\",
+            members: [{ _id: 0, host: \"mongodb-primary:27017\" }]
+          })
+        ' || true
+        wait
+      "
 
 networks:
   erotic_site:

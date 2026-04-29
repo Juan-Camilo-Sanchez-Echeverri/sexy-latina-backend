@@ -61,3 +61,7 @@ mongo/
 uploads
 .env.development
 redis/
+redis-dev/
+mongo-dev/
+
+startSexyLatina

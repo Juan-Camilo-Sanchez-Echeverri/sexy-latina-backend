@@ -6,3 +6,7 @@ mongo/
 .git/
 
 uploads/
+
+mongo-dev/
+redis-dev/
+redis/

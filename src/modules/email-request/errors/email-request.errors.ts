@@ -1,51 +1,29 @@
-import { ErrorsResponse } from '@common/responses';
-
-const code = 6000;
+import { ServiceError } from '@common/responses';
 
 export const EmailRequestErrors = {
   TOKEN_INVALID: {
-    code: code,
-    details: [
-      {
-        property: 'token',
-        errors: ['Email request token is invalid'],
-      },
-    ],
+    code: 'invalid-token',
+    message: 'Email request token is invalid',
+    details: { token: ['Email request token is invalid'] },
   },
   TOKEN_EXPIRED: {
-    code: code + 1,
-    details: [
-      {
-        property: 'token',
-        errors: ['Email request token expired'],
-      },
-    ],
+    code: 'token-expired',
+    message: 'Email request token expired',
+    details: { token: ['Email request token expired'] },
   },
   MAX_ATTEMPTS_REACHED: {
-    code: code + 2,
-    details: [
-      {
-        property: 'attempts',
-        errors: ['Maximum number of attempts reached'],
-      },
-    ],
+    code: 'max-attempts-reached',
+    message: 'Maximum number of attempts reached',
+    details: { attempts: ['Maximum number of attempts reached'] },
   },
   REQUEST_NOT_FOUND_OR_EXPIRED: {
-    code: code + 3,
-    details: [
-      {
-        property: 'request',
-        errors: ['Request not found or expired'],
-      },
-    ],
+    code: 'request-not-found',
+    message: 'Request not found or expired',
+    details: { request: ['Request not found or expired'] },
   },
   COOLDOWN_ACTIVE: {
-    code: code + 4,
-    details: [
-      {
-        property: 'cooldown',
-        errors: ['Please wait before requesting another email'],
-      },
-    ],
+    code: 'cooldown-active',
+    message: 'Please wait before requesting another email',
+    details: { cooldown: ['Please wait before requesting another email'] },
   },
-} as const satisfies Record<string, ErrorsResponse>;
+} as const satisfies Record<string, ServiceError>;

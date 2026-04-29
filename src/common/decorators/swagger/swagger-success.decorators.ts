@@ -46,7 +46,7 @@ export const ApiOkResponseWrapper = <TModel extends Type>(
               {
                 type: 'object',
                 properties: {
-                  docs: {
+                  data: {
                     type: 'array',
                     items: { $ref: getSchemaPath(model) },
                   },

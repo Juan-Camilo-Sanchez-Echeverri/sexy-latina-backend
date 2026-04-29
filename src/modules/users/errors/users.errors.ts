@@ -1,10 +1,8 @@
-import { ErrorsResponse } from '@common/responses';
-
-const code = 1000;
+import { ServiceError } from '@common/responses';
 
 export const UsersErrors = {
   USER_NOT_FOUND: {
-    code: code,
-    details: [{ property: null, errors: ['User not found'] }],
+    code: 'user-not-found',
+    message: 'User not found',
   },
-} as const satisfies Record<string, ErrorsResponse>;
+} as const satisfies Record<string, ServiceError>;

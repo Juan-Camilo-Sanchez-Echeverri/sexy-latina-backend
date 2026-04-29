@@ -15,17 +15,8 @@ export type UserDocument = HydratedDocument<User>;
   strictQuery: 'throw',
 })
 export class User extends BaseSchema {
-  /**
-   * First name of the user.
-   */
   @Prop()
-  firstName: string;
-
-  /**
-   * Last name of the user.
-   */
-  @Prop()
-  lastName: string;
+  name?: string;
 
   /**
    * Password of the user used for authentication.
@@ -43,8 +34,8 @@ export class User extends BaseSchema {
   /**
    * Phone number of the user.
    */
-  @Prop({ required: true, unique: true })
-  phone: string;
+  @Prop()
+  phone?: string;
 
   /**
    * Type of document used for user identification.
@@ -53,18 +44,18 @@ export class User extends BaseSchema {
     enum: UserDocumentType,
     type: String,
   })
-  documentType: UserDocumentType;
+  documentType?: UserDocumentType;
 
   /**
    * Document number used for user identification.
    */
-  @Prop({ required: true, unique: true })
-  document: string;
+  @Prop()
+  document?: string;
 
   /**
    * Roles assigned to the user in the system.
    */
-  @Prop()
+  @Prop({ default: [] })
   roles: UserRole[];
 
   /**

@@ -166,6 +166,63 @@ Para iniciar el proyecto en un servidor de desarrollo, asegúrate primero de con
 
 Luego elige **una** forma de ejecutar la aplicación:
 
+### Opción A: Desarrollo con Docker (levanta todo)
+
+Esta opción levanta **Backend + MongoDB (Replica Set) + Redis + Redis Commander** usando `.env.development` con un solo comando.
+
+```bash
+npm run start:docker:dev
+```
+
+Esto levanta los siguientes servicios:
+
+| Servicio         | Contenedor           | Puerto externo             |
+| ---------------- | -------------------- | -------------------------- |
+| Backend (NestJS) | backend-dev          | `${PORT}`                  |
+| MongoDB 4.4      | mongodb-primary-dev  | — (solo red interna)       |
+| Redis            | redis-dev            | `${REDIS_PORT}`            |
+| Redis Commander  | redis-commander-dev  | 8082                       |
+
+> Los datos de MongoDB y Redis se persisten en las carpetas `mongo-dev/` y `redis-dev/` respectivamente, en la raíz del proyecto.
+
+#### (Opcional) Restaurar DB inicial / cargar backup
+
+Si estás levantando una base de datos nueva y necesitas cargar un backup (por ejemplo para tener el usuario **superAdmin**), puedes restaurar el dump así:
+
+```bash
+# Copiar el backup al contenedor de MongoDB
+docker cp startSexyLatina mongodb-primary-dev:/startSexyLatina
+
+# Entrar al contenedor
+docker exec -it mongodb-primary-dev bash
+
+# (Opcional) verificar que el archivo exista
+ls
+
+# Restaurar a la base de datos "sexy-latina"
+mongorestore -d sexy-latina --archive=startSexyLatina
+```
+
+#### Ver logs del backend
+
+```bash
+docker logs -f backend-dev
+```
+
+#### Reconstruir después de cambios
+
+```bash
+npm run start:docker:dev
+```
+
+#### Detener todos los servicios
+
+```bash
+docker compose -f ./docker/docker-compose.dev.yml down
+```
+
+### Opción B: Desarrollo con PM2 (app en el host)
+
 **1. Iniciar la aplicación con PM2**
 
 ```bash

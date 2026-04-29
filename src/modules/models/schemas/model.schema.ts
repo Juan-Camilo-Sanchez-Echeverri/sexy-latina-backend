@@ -23,8 +23,7 @@ import {
 
 import { ServicePrice, ServicePriceSchema } from './service-price.schema';
 import { SocialLinks, SocialLinksSchema } from './social-links.schema';
-
-export type ModelDocument = HydratedDocument<Model>;
+import { PortfolioItem, PortfolioItemSchema } from './portfolio-item.schema';
 
 @Schema({
   timestamps: true,
@@ -40,23 +39,21 @@ export class Model extends BaseSchema {
     type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     required: true,
+    unique: true,
   })
-  user: PopulatedEntity<
-    UserDocument,
-    '_id' | 'firstName' | 'lastName' | 'phone'
-  >;
+  user: PopulatedEntity<UserDocument, '_id' | 'name' | 'phone'>;
 
   /**
    * Age
    */
-  @Prop({ required: true })
-  age: number;
+  @Prop()
+  age?: number;
 
   /**
    * Portfolio of images/videos (URLs)
    */
-  @Prop({ type: [String], default: [] })
-  portfolio: string[];
+  @Prop({ type: [PortfolioItemSchema], default: [] })
+  portfolio: PortfolioItem[];
 
   /**
    * List of services offered with prices
@@ -67,26 +64,35 @@ export class Model extends BaseSchema {
   /**
    * Reference to city (approximate location)
    */
-  @Prop({ type: Types.ObjectId, ref: City.name, required: true })
-  city: PopulatedEntity<CityDocument, '_id' | 'name'>;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: City.name,
+  })
+  city?: PopulatedEntity<CityDocument, '_id' | 'name'>;
 
   /**
    * Reference to state
    */
-  @Prop({ type: Types.ObjectId, ref: State.name, required: true })
-  state: PopulatedEntity<StateDocument, '_id' | 'name'>;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: State.name,
+  })
+  state?: PopulatedEntity<StateDocument, '_id' | 'name'>;
 
   /**
    * Reference to country
    */
-  @Prop({ type: Types.ObjectId, ref: Country.name, required: true })
-  country: PopulatedEntity<CountryDocument, '_id' | 'name'>;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Country.name,
+  })
+  country?: PopulatedEntity<CountryDocument, '_id' | 'name'>;
 
   /**
    * Nationality
    */
-  @Prop({ enum: Nationality, required: true })
-  nationality: Nationality;
+  @Prop({ type: String, enum: Nationality })
+  nationality?: Nationality;
 
   /**
    * Languages spoken
@@ -129,10 +135,19 @@ export class Model extends BaseSchema {
   height: number;
 
   /**
+   * Weight in kilograms
+   */
+  @Prop()
+  weight: number;
+
+  /**
    * Whether the model is verified
    */
   @Prop({ default: false })
   verified: boolean;
+
+  @Prop({ default: true })
+  isActive: boolean;
 
   /**
    * Image profile
@@ -143,12 +158,18 @@ export class Model extends BaseSchema {
 
 export const ModelSchema = SchemaFactory.createForClass(Model);
 
+export type ModelDocumentOverride = {
+  portfolio: Types.DocumentArray<PortfolioItem>;
+};
+
+export type ModelDocument = HydratedDocument<Model, ModelDocumentOverride>;
+
 ModelSchema.index({ categories: 1 });
 ModelSchema.index({ city: 1 });
 ModelSchema.index({ state: 1 });
 ModelSchema.index({ country: 1 });
+ModelSchema.index({ isActive: 1 });
 ModelSchema.index({ status: 1 });
 ModelSchema.index({ verified: 1 });
-ModelSchema.index({ user: 1 });
 ModelSchema.index({ nationality: 1 });
 ModelSchema.index({ languages: 1 });

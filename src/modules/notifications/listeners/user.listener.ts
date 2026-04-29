@@ -17,11 +17,11 @@ export class UserListener {
     }
 
     const currentDate = DateHelper.getCurrentDate();
-    const expiresIn = DateHelper.add(currentDate, 10, 'minutes');
+    const expiresIn = DateHelper.add(currentDate, 1, 'hour');
 
     await this.emailRequestService.create({
       email: user.email,
-      firstName: user.firstName,
+      name: user.name || '',
       type: 'activeAccount',
       expiresIn,
     });

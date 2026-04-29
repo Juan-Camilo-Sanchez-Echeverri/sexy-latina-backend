@@ -1,0 +1,393 @@
+// Seeder: Colombia — all 32 departments + Bogotá D.C. with all municipalities
+// Run: docker exec mongodb-primary mongosh sexy-latina /scripts/seed-colombia.js
+
+const DB_NAME = 'sexy-latina';
+db = db.getSiblingDB(DB_NAME);
+
+if (db.countries.findOne({ code: 'CO' })) {
+  print('Colombia already seeded. Skipping.');
+  quit();
+}
+
+const countryId = new ObjectId();
+db.countries.insertOne({
+  _id: countryId,
+  code: 'CO',
+  name: 'Colombia',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+});
+print('✓ Country inserted: Colombia');
+
+const data = [
+  {
+    code: 'AMA', name: 'Amazonas',
+    cities: [
+      'Leticia','El Encanto','La Chorrera','La Pedrera','La Victoria',
+      'Mirití-Paraná','Puerto Alegría','Puerto Arica','Puerto Nariño','Puerto Santander','Tarapacá',
+    ],
+  },
+  {
+    code: 'ANT', name: 'Antioquia',
+    cities: [
+      'Medellín','Abejorral','Abriaquí','Alejandría','Amagá','Amalfi','Andes','Angelópolis',
+      'Angostura','Anorí','Ansermanuevo','Anzá','Apartadó','Arboletes','Argelia','Armenia',
+      'Barbosa','Bello','Betania','Betulia','Briceño','Buriticá','Cáceres','Caicedo',
+      'Caldas','Campamento','Cañasgordas','Caracolí','Caramanta','Carepa','Carmen de Viboral',
+      'Carolina','Caucasia','Chigorodó','Cisneros','Cocorná','Concepción','Concordia',
+      'Copacabana','Dabeiba','Don Matías','Ebéjico','El Bagre','El Carmen de Atrato','El Santuario',
+      'Entrerríos','Envigado','Fredonia','Frontino','Giraldo','Girardota','Gómez Plata',
+      'Granada','Guadalupe','Guarne','Guatapé','Heliconia','Hispania','Itagüí','Ituango',
+      'Jardín','Jericó','La Ceja','La Estrella','La Pintada','La Unión','Liborina',
+      'Maceo','Marinilla','Montebello','Murindó','Mutatá','Nariño','Nechí','Necoclí',
+      'Olaya','Peñol','Peque','Pueblorrico','Puerto Berrío','Puerto Nare','Puerto Triunfo',
+      'Remedios','Retiro','Rionegro','Sabanalarga','Sabaneta','Salgar','San Andrés de Cuerquia',
+      'San Carlos','San Francisco','San Jerónimo','San José de la Montaña','San Juan de Urabá',
+      'San Luis','San Pedro de los Milagros','San Pedro de Urabá','San Rafael','San Roque',
+      'San Vicente','Santa Bárbara','Santa Rosa de Osos','Santo Domingo','Segovia',
+      'Sonsón','Sopetrán','Supported','Tarazá','Tarso','Titiribí','Toledo','Turbo',
+      'Uramita','Urrao','Valdivia','Valparaíso','Vegachí','Venecia','Vigía del Fuerte',
+      'Yalí','Yarumal','Yolombó','Yondó','Zaragoza',
+    ],
+  },
+  {
+    code: 'ARA', name: 'Arauca',
+    cities: [
+      'Arauca','Arauquita','Cravo Norte','Fortul','Puerto Rondón','Saravena','Tame',
+    ],
+  },
+  {
+    code: 'ATL', name: 'Atlántico',
+    cities: [
+      'Barranquilla','Baranoa','Campo de la Cruz','Candelaria','Galapa','Juan de Acosta',
+      'Luruaco','Malambo','Manatí','Palmar de Varela','Piojó','Polonuevo','Ponedera',
+      'Puerto Colombia','Repelón','Sabanagrande','Sabanalarga','Santa Lucía','Santo Tomás',
+      'Soledad','Suán','Tubará','Usiacurí',
+    ],
+  },
+  {
+    code: 'BOG', name: 'Bogotá D.C.',
+    cities: ['Bogotá'],
+  },
+  {
+    code: 'BOL', name: 'Bolívar',
+    cities: [
+      'Cartagena','Achí','Altos del Rosario','Arenal','Arjona','Arroyohondo','Barranco de Loba',
+      'Calamar','Cantagallo','Cicuco','Clemencia','Córdoba','El Carmen de Bolívar','El Guamo',
+      'El Peñón','Hatillo de Loba','Magangué','Mahates','Margarita','María la Baja',
+      'Montecristo','Mompox','Morales','Norosí','Pinillos','Regidor','Río Viejo','San Cristóbal',
+      'San Estanislao','San Fernando','San Jacinto','San Jacinto del Cauca','San Juan Nepomuceno',
+      'San Martín de Loba','San Pablo','Santa Catalina','Santa Rosa','Santa Rosa del Sur',
+      'Simití','Soplaviento','Talaigua Nuevo','Tiquisio','Turbaco','Turbaná','Villanueva','Zambrano',
+    ],
+  },
+  {
+    code: 'BOY', name: 'Boyacá',
+    cities: [
+      'Tunja','Almeida','Aquitania','Arcabuco','Belén','Berbeo','Betéitiva','Boavita',
+      'Boyacá','Briceño','Buenavista','Busbanzá','Caldas','Campohermoso','Cerinza',
+      'Chinavita','Chiquinquirá','Chíquiza','Chiscas','Chita','Chitaraque','Chivatá',
+      'Ciénega','Cómbita','Coper','Corrales','Covarachía','Cubará','Cucaita','Cuítiva',
+      'Duitama','El Cocuy','El Espino','Firavitoba','Floresta','Gachantivá','Gámeza',
+      'Garagoa','Guacamayas','Guateque','Guayatá','Güicán','Iza','Jenesano','Jericó',
+      'La Capilla','La Uvita','La Victoria','Labranzagrande','Macanal','Maripí','Miraflores',
+      'Mongua','Monguí','Moniquirá','Motavita','Muzo','Nobsa','Nuevo Colón','Oicatá',
+      'Otanche','Pachavita','Páez','Paipa','Pajarito','Panqueba','Pauna','Paya',
+      'Paz de Río','Pesca','Pisba','Puerto Boyacá','Quípama','Ramiriquí','Ráquira',
+      'Rondón','Saboyá','Sáchica','Samacá','San Eduardo','San José de Pare','San Luis de Gaceno',
+      'San Mateo','San Miguel de Sema','San Pablo de Borbur','Santana','Santa María',
+      'Santa Rosa de Viterbo','Santa Sofía','Sativanorte','Sativasur','Siachoque','Soatá',
+      'Socotá','Socha','Sogamoso','Somondoco','Sora','Soracá','Sotaquirá','Susacón',
+      'Sutamarchán','Sutatenza','Tasco','Tenza','Tibaná','Tibasosa','Tinjacá','Tipacoque',
+      'Toca','Togüí','Tópaga','Tota','Turmequé','Tuta','Tutazá','Umbita','Ventaquemada',
+      'Viracachá','Zetaquira',
+    ],
+  },
+  {
+    code: 'CAL', name: 'Caldas',
+    cities: [
+      'Manizales','Aguadas','Anserma','Aranzazu','Belalcázar','Chinchiná','Filadelfia',
+      'La Dorada','La Merced','Manzanares','Marmato','Marquetalia','Marulanda','Neira',
+      'Norcasia','Pácora','Palestina','Pensilvania','Riosucio','Risaralda','Salamina',
+      'Samaná','San José','Supía','Victoria','Villamaría','Viterbo',
+    ],
+  },
+  {
+    code: 'CAQ', name: 'Caquetá',
+    cities: [
+      'Florencia','Albania','Belén de los Andaquíes','Cartagena del Chairá','Curillo',
+      'El Doncello','El Paujíl','La Montañita','Milán','Morelia','Puerto Rico','San José del Fragua',
+      'San Vicente del Caguán','Solano','Solita','Valparaíso',
+    ],
+  },
+  {
+    code: 'CAS', name: 'Casanare',
+    cities: [
+      'Yopal','Aguazul','Chámeza','Hato Corozal','La Salina','Maní','Monterrey','Nunchía',
+      'Orocué','Paz de Ariporo','Pore','Recetor','Sabanalarga','Sácama','San Luis de Palenque',
+      'Támara','Tauramena','Trinidad','Villanueva',
+    ],
+  },
+  {
+    code: 'CAU', name: 'Cauca',
+    cities: [
+      'Popayán','Almaguer','Argelia','Balboa','Bolívar','Buenos Aires','Cajibío','Caldono',
+      'Caloto','Corinto','El Tambo','Florencia','Guachené','Guapi','Inzá','Jambaló',
+      'La Sierra','La Vega','López de Micay','Mercaderes','Miranda','Morales','Padilla',
+      'Páez','Patía','Piamonte','Piendamó','Puerto Tejada','Puracé','Rosas',
+      'San Sebastián','Santa Rosa','Santander de Quilichao','Silvia','Sotara','Suárez',
+      'Sucre','Timbío','Timbiquí','Toribío','Totoró','Villa Rica',
+    ],
+  },
+  {
+    code: 'CES', name: 'Cesar',
+    cities: [
+      'Valledupar','Aguachica','Agustín Codazzi','Astrea','Becerril','Bosconia',
+      'Chimichagua','Chiriguaná','Curumaní','El Copey','El Paso','Gamarra','González',
+      'La Gloria','La Jagua de Ibirico','La Paz','Manaure','Pailitas','Pelaya','Pueblo Bello',
+      'Río de Oro','San Alberto','San Diego','San Martín','Tamalameque',
+    ],
+  },
+  {
+    code: 'CHO', name: 'Chocó',
+    cities: [
+      'Quibdó','Acandí','Alto Baudó','Atrato','Bagadó','Bahía Solano','Bajo Baudó',
+      'Belén de Bajirá','Bojayá','Carmen del Darién','Cértegui','Condoto','El Carmen de Atrato',
+      'El Litoral del San Juan','Istmina','Juradó','Lloró','Medio Atrato','Medio Baudó',
+      'Medio San Juan','Nóvita','Nuquí','Río Iro','Río Quito','Riosucio','San José del Palmar',
+      'Sipí','Tadó','Unguía','Unión Panamericana',
+    ],
+  },
+  {
+    code: 'COR', name: 'Córdoba',
+    cities: [
+      'Montería','Ayapel','Buenavista','Canalete','Cereté','Chimá','Chinú','Ciénaga de Oro',
+      'Cotorra','La Apartada','Lorica','Los Córdobas','Momil','Montelíbano','Moñitos',
+      'Planeta Rica','Pueblo Nuevo','Puerto Escondido','Puerto Libertador','Purísima',
+      'Sahagún','San Andrés de Sotavento','San Antero','San Bernardo del Viento',
+      'San Carlos','San José de Uré','San Pelayo','Santa Cruz de Lorica','Tierralta',
+      'Tuchín','Valencia',
+    ],
+  },
+  {
+    code: 'CUN', name: 'Cundinamarca',
+    cities: [
+      'Bogotá','Agua de Dios','Albán','Anapoima','Anolaima','Apulo','Arbeláez',
+      'Beltrán','Bituima','Bojacá','Cabrera','Cachipay','Cajicá','Caparrapí',
+      'Cáqueza','Carmen de Carupa','Chaguaní','Chía','Chipaque','Choachí','Chocontá',
+      'Cogua','Cota','Cucunubá','El Colegio','El Peñón','El Rosal','Facatativá',
+      'Fomeque','Fosca','Funza','Fúquene','Fusagasugá','Gachalá','Gachancipá',
+      'Gachetá','Gama','Girardot','Granada','Guachetá','Guaduas','Guasca','Guataquí',
+      'Guatavita','Guayabal de Síquima','Guayabetal','Gutiérrez','Jerusalén','Junín',
+      'La Calera','La Mesa','La Palma','La Peña','La Vega','Lenguazaque','Machetá',
+      'Madrid','Manta','Medina','Mosquera','Nariño','Nemocón','Nilo','Nimaima',
+      'Nocaima','Pacho','Paime','Pandi','Paratebueno','Pasca','Puerto Salgar','Pulí',
+      'Quebradanegra','Quetame','Quipile','Ricaurte','San Antonio del Tequendama',
+      'San Bernardo','San Cayetano','San Francisco','San Juan de Rioseco','Sasaima',
+      'Sesquilé','Sibaté','Silvania','Simijaca','Soacha','Sopó','Subachoque','Suesca',
+      'Supatá','Susa','Sutatausa','Tabio','Tausa','Tena','Tibacuy','Tibirita',
+      'Tocaima','Tocancipá','Topaipí','Ubalá','Ubaque','Ubaté','Une','Útica',
+      'Venecia','Vergara','Vianí','Villagómez','Villapinzón','Villeta','Viotá',
+      'Yacopí','Zipacón','Zipaquirá',
+    ],
+  },
+  {
+    code: 'GUA', name: 'Guainía',
+    cities: [
+      'Inírida','Barranco Minas','Cacahual','La Guadalupe','Mapiripana','Morichal',
+      'Pana Pana','Puerto Colombia','San Felipe',
+    ],
+  },
+  {
+    code: 'GUV', name: 'Guaviare',
+    cities: ['San José del Guaviare','Calamar','El Retorno','Miraflores'],
+  },
+  {
+    code: 'HUI', name: 'Huila',
+    cities: [
+      'Neiva','Acevedo','Agrado','Aipe','Algeciras','Altamira','Baraya','Campoalegre',
+      'Colombia','Elías','Garzón','Gigante','Guadalupe','Hobo','Iquira','Isnos',
+      'La Argentina','La Plata','Nátaga','Oporapa','Paicol','Palermo','Palestina',
+      'Pital','Pitalito','Rivera','Saladoblanco','San Agustín','Santa María',
+      'Suaza','Tarqui','Tesalia','Tello','Teruel','Timaná','Villavieja','Yaguará',
+    ],
+  },
+  {
+    code: 'LAG', name: 'La Guajira',
+    cities: [
+      'Riohacha','Albania','Barrancas','Dibulla','Distracción','El Molino','Fonseca',
+      'Hatonuevo','La Jagua del Pilar','Maicao','Manaure','San Juan del Cesar','Uribia',
+      'Urumita','Villanueva',
+    ],
+  },
+  {
+    code: 'MAG', name: 'Magdalena',
+    cities: [
+      'Santa Marta','Algarrobo','Aracataca','Ariguaní','Cerro de San Antonio','Chivolo',
+      'Ciénaga','Concordia','El Banco','El Piñón','El Retén','Fundación','Guamal',
+      'Nueva Granada','Pedraza','Pijiño del Carmen','Pivijay','Plato','Puebloviejo',
+      'Remolino','Sabanas de San Ángel','Salamina','San Sebastián de Buenavista',
+      'San Zenón','Santa Ana','Santa Bárbara de Pinto','Sitionuevo','Tenerife','Zapayán','Zona Bananera',
+    ],
+  },
+  {
+    code: 'MET', name: 'Meta',
+    cities: [
+      'Villavicencio','Acacías','Barranca de Upía','Cabuyaro','Castilla la Nueva',
+      'Cubarral','Cumaral','El Calvario','El Castillo','El Dorado','Fuente de Oro',
+      'Granada','Guamal','La Macarena','La Uribe','Lejanías','Mapiripán','Mesetas',
+      'Puerto Concordia','Puerto Gaitán','Puerto Lleras','Puerto López','Puerto Rico',
+      'Restrepo','San Carlos de Guaroa','San Juan de Arama','San Juanito','San Martín',
+      'Vistahermosa',
+    ],
+  },
+  {
+    code: 'NAR', name: 'Nariño',
+    cities: [
+      'Pasto','Albán','Aldana','Ancuyá','Arboleda','Barbacoas','Belén','Buesaco',
+      'Chachagüí','Colón','Consacá','Contadero','Córdoba','Cuaspud','Cumbal',
+      'Cumbitara','El Charco','El Peñol','El Rosario','El Tablón de Gómez','El Tambo',
+      'Francisco Pizarro','Funes','Guachucal','Guaitarilla','Gualmatán','Iles','Imués',
+      'Ipiales','La Cruz','La Florida','La Llanada','La Tola','La Unión','Leiva',
+      'Linares','Los Andes','Magüí','Mallama','Mosquera','Nariño','Olaya Herrera',
+      'Ospina','Policarpa','Potosí','Providencia','Puerres','Pupiales','Ricaurte',
+      'Roberto Payán','Samaniego','San Bernardo','San Lorenzo','San Pablo','San Pedro de Cartago',
+      'Sandoná','Santa Bárbara','Santacruz','Sapuyes','Taminango','Tangua','Tumaco',
+      'Túquerres','Yacuanquer',
+    ],
+  },
+  {
+    code: 'NSA', name: 'Norte de Santander',
+    cities: [
+      'Cúcuta','Ábrego','Arboledas','Bochalema','Bucarasica','Cácota','Cachirá',
+      'Chinácota','Chitagá','Convención','Cucutilla','Durania','El Carmen','El Tarra',
+      'El Zulia','Gramalote','Hacarí','Herrán','La Esperanza','La Playa','Labateca',
+      'Los Patios','Lourdes','Mutiscua','Ocaña','Pamplona','Pamplonita','Puerto Santander',
+      'Ragonvalia','Salazar','San Calixto','San Cayetano','Santiago','Sardinata',
+      'Silos','Teorama','Tibú','Toledo','Villa Caro','Villa del Rosario',
+    ],
+  },
+  {
+    code: 'PUT', name: 'Putumayo',
+    cities: [
+      'Mocoa','Colón','Orito','Puerto Asís','Puerto Caicedo','Puerto Guzmán','Puerto Leguízamo',
+      'San Francisco','San Miguel','Santiago','Sibundoy','Valle del Guamuez','Villagarzón',
+    ],
+  },
+  {
+    code: 'QUI', name: 'Quindío',
+    cities: [
+      'Armenia','Buenavista','Calarcá','Circasia','Córdoba','Filandia','Génova',
+      'La Tebaida','Montenegro','Pijao','Quimbaya','Salento',
+    ],
+  },
+  {
+    code: 'RIS', name: 'Risaralda',
+    cities: [
+      'Pereira','Apía','Balboa','Belén de Umbría','Dosquebradas','Guática','La Celia',
+      'La Virginia','Marsella','Mistrató','Pueblo Rico','Quinchía','Santa Rosa de Cabal',
+      'Santuario',
+    ],
+  },
+  {
+    code: 'SAP', name: 'San Andrés y Providencia',
+    cities: ['San Andrés','Providencia'],
+  },
+  {
+    code: 'SAN', name: 'Santander',
+    cities: [
+      'Bucaramanga','Aguada','Albania','Aratoca','Barbosa','Barichara','Barrancabermeja',
+      'Betulia','Bolívar','Cabrera','California','Capitanejo','Carcasí','Cepitá',
+      'Cerrito','Charalá','Charta','Chima','Chipatá','Cimitarra','Confines','Contratación',
+      'Coromoro','Curití','El Carmen de Chucurí','El Guacamayo','El Peñón','El Playón',
+      'Encino','Enciso','Florián','Floridablanca','Galán','Gámbita','Girón','Guaca',
+      'Guadalupe','Guapotá','Guavatá','Güepsa','Hato','Jesús María','Jordán','La Belleza',
+      'La Paz','Landázuri','Lebrija','Los Santos','Macaravita','Málaga','Matanza',
+      'Mogotes','Molagavita','Ocamonte','Oiba','Onzaga','Palmar','Palmas del Socorro',
+      'Páramo','Piedecuesta','Pinchote','Puente Nacional','Puerto Parra','Puerto Wilches',
+      'Rionegro','Sabana de Torres','San Andrés','San Benito','San Gil','San Joaquín',
+      'San José de Miranda','San Miguel','San Vicente de Chucurí','Santa Bárbara',
+      'Santa Helena del Opón','Simacota','Socorro','Suaita','Sucre','Suratá',
+      'Tona','Valle de San José','Vélez','Vetas','Villanueva','Zapatoca',
+    ],
+  },
+  {
+    code: 'SUC', name: 'Sucre',
+    cities: [
+      'Sincelejo','Buenavista','Caimito','Chalán','Coloso','Corozal','Coveñas',
+      'El Roble','Galeras','Guaranda','La Unión','Los Palmitos','Majagual','Morroa',
+      'Ovejas','Palmito','Sampués','San Benito Abad','San Juan de Betulia','San Marcos',
+      'San Onofre','San Pedro','San Luis de Sincé','Since','Sucre','Tolú','Toluviejo',
+    ],
+  },
+  {
+    code: 'TOL', name: 'Tolima',
+    cities: [
+      'Ibagué','Alpujarra','Alvarado','Ambalema','Anzoátegui','Armero','Ataco',
+      'Cajamarca','Carmen de Apicalá','Casabianca','Chaparral','Coello','Coyaima',
+      'Cunday','Dolores','Espinal','Falan','Flandes','Fresno','Guamo','Herveo',
+      'Honda','Icononzo','Lérida','Líbano','Mariquita','Melgar','Murillo','Natagaima',
+      'Ortega','Palocabildo','Piedras','Planadas','Prado','Purificación','Rioblanco',
+      'Roncesvalles','Rovira','Saldaña','San Antonio','San Luis','Santa Isabel',
+      'Suárez','Valle de San Juan','Venadillo','Villahermosa','Villarrica',
+    ],
+  },
+  {
+    code: 'VAC', name: 'Valle del Cauca',
+    cities: [
+      'Cali','Alcalá','Andalucía','Ansermanuevo','Argelia','Bolívar','Buenaventura',
+      'Buga','Bugalagrande','Caicedonia','Calima','Candelaria','Cartago','Dagua',
+      'El Águila','El Cairo','El Cerrito','El Dovio','Florida','Ginebra','Guacarí',
+      'Jamundí','La Cumbre','La Unión','La Victoria','Obando','Palmira','Pradera',
+      'Restrepo','Riofrío','Roldanillo','San Pedro','Sevilla','Toro','Trujillo',
+      'Tuluá','Ulloa','Versalles','Vijes','Yotoco','Yumbo','Zarzal',
+    ],
+  },
+  {
+    code: 'VAU', name: 'Vaupés',
+    cities: ['Mitú','Carurú','Pacoa','Papunaua','Taraira','Yavaraté'],
+  },
+  {
+    code: 'VID', name: 'Vichada',
+    cities: ['Puerto Carreño','Cumaribo','La Primavera','Santa Rosalía'],
+  },
+];
+
+let stateCount = 0;
+let cityCount = 0;
+
+data.forEach(({ code, name, cities }) => {
+  const stateId = new ObjectId();
+
+  db.states.insertOne({
+    _id: stateId,
+    code,
+    name,
+    country: countryId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  stateCount++;
+
+  const cityDocs = cities.map((cityName, i) => ({
+    _id: new ObjectId(),
+    code: code + '_' + String(i + 1).padStart(3, '0'),
+    name: cityName,
+    state: stateId,
+    country: countryId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }));
+
+  db.cities.insertMany(cityDocs);
+  cityCount += cityDocs.length;
+});
+
+print('✓ Departments inserted: ' + stateCount);
+print('✓ Municipalities inserted: ' + cityCount);
+print('Seeder completed successfully.');
+
+// Para volver a correrlo en limpio (si necesitas reiniciar):
+//   docker exec mongodb-primary mongosh --quiet --eval 'rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "mongodb-primary:27017" }] })'
+//   docker exec mongodb-primary mongo sexy-latina --eval "db.countries.deleteMany({code:'CO'}); db.states.deleteMany({}); db.cities.deleteMany({})"
+//   docker exec mongodb-primary mongo sexy-latina /scripts/seed-colombia.js

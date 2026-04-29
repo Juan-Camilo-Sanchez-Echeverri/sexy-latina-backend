@@ -26,16 +26,13 @@ export function validateMongo<T>(
       const duplicatedKey = Object.keys(error.keyPattern ?? {})[0];
       const duplicatedValue = error.keyValue?.[duplicatedKey] as string;
 
-      const message = `There is already a registry with the same ${duplicatedKey} : ${duplicatedValue}`;
+      const message = `There is already a registry with the same ${duplicatedKey}: ${duplicatedValue}`;
 
       return next(
         new ConflictException({
-          details: [
-            {
-              property: duplicatedKey,
-              errors: [message],
-            },
-          ],
+          code: `invalid-${duplicatedKey}`,
+          message,
+          details: { [duplicatedKey]: [message] },
         }),
       );
     }

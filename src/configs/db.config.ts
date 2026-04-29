@@ -24,6 +24,7 @@ export class MongooseConfigService implements MongooseOptionsFactory {
       retryDelay: 3000,
       connectionFactory: (connection: Connection) => {
         connection.set('debug', envs.nodeEnv === ExecModes.LOCAL);
+        paginate.paginate.options = { customLabels: { docs: 'data' } };
         connection.plugin(paginate);
 
         connection.plugin((schema) => {

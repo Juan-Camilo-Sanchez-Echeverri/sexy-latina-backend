@@ -1,17 +1,16 @@
 import {
   IsArray,
   IsEnum,
+  IsInt,
   IsMongoId,
   IsNumber,
   IsOptional,
-  Max,
+  IsString,
   Min,
   ValidateNested,
 } from 'class-validator';
 
 import { Type } from 'class-transformer';
-
-import { IsNotBlank } from '@common/decorators';
 
 import { ModelCategory, Nationality, Language } from '../enums';
 
@@ -28,49 +27,58 @@ export class CreateModelDto {
 
   /**
    * Age
+   *
+   * @example 25
    */
-  @IsNumber()
+  @IsOptional()
+  @IsInt()
   @Min(18)
-  readonly age: number;
+  readonly age?: number;
 
   /**
    * List of services offered with prices
    */
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ServicePriceDto)
-  readonly services: ServicePriceDto[];
+  readonly services?: ServicePriceDto[];
 
   /**
    * City
    */
+  @IsOptional()
   @IsMongoId()
-  readonly city: string;
+  readonly city?: string;
 
   /**
    * State
    */
+  @IsOptional()
   @IsMongoId()
-  readonly state: string;
+  readonly state?: string;
 
   /**
    * Country
    */
+  @IsOptional()
   @IsMongoId()
-  readonly country: string;
+  readonly country?: string;
 
   /**
    * Nationality
    */
+  @IsOptional()
   @IsEnum(Nationality)
-  readonly nationality: Nationality;
+  readonly nationality?: Nationality;
 
   /**
    * Languages spoken
    */
+  @IsOptional()
   @IsArray()
   @IsEnum(Language, { each: true })
-  readonly languages: Language[];
+  readonly languages?: Language[];
 
   /**
    * Social media links
@@ -78,34 +86,47 @@ export class CreateModelDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => SocialLinksDto)
-  readonly socialLinks: SocialLinksDto;
+  readonly socialLinks?: SocialLinksDto;
 
   /**
    * Availability schedule
    */
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => AvailabilityScheduleDto)
-  readonly availability: AvailabilityScheduleDto[];
+  readonly availability?: AvailabilityScheduleDto[];
 
   /**
    * Model categories
    */
+  @IsOptional()
   @IsArray()
   @IsEnum(ModelCategory, { each: true })
-  readonly categories: ModelCategory[];
+  readonly categories?: ModelCategory[];
 
   /**
    * Profile description or bio
    */
-  @IsNotBlank()
-  readonly description: string;
+  @IsOptional()
+  @IsString()
+  readonly description?: string;
 
   /**
    * Height in centimeters
+   *
+   * @example 1.75
    */
-  @IsNumber()
-  @Min(100)
-  @Max(250)
-  readonly height: number;
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  readonly height?: number;
+
+  /**
+   * Weight in kilograms
+   *
+   * @example 60
+   */
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  readonly weight?: number;
 }

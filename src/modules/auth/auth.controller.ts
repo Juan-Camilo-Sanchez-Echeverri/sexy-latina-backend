@@ -5,7 +5,6 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Query,
 } from '@nestjs/common';
 
 import {
@@ -169,19 +168,21 @@ export class AuthController {
   }
 
   /**
-   * Request activate account
+   * Resend activation email
    *
-   * @remarks Request an email to activate the user's account.
+   * @remarks Resend the account activation email in case the user did not receive it.
    *
    */
   @Public()
-  @Get('activate-account')
-  @ApiNotFoundResponseWrapper(EmailRequestErrors.TOKEN_INVALID)
-  @ApiConflictResponseWrapper(EmailRequestErrors.TOKEN_EXPIRED)
+  @Post('activate-account/resend')
+  @HttpCode(HttpStatus.OK)
+  @ApiValidationResponseWrapper(AuthExamples.resendActivation)
+  @ApiConflictResponseWrapper(EmailRequestErrors.MAX_ATTEMPTS_REACHED)
+  @ApiConflictResponseWrapper(EmailRequestErrors.COOLDOWN_ACTIVE)
   @ApiUnauthorizedResponse({ example: AuthErrors.EMAIL_NOT_FOUND })
   @ApiOkResponseWrapper(RequestActivateAccountResponse, { isPaginate: false })
   async requestActivateAccount(
-    @Query('email') email: string,
+    @Body() { email }: RecoverPasswordDto,
   ): Promise<RequestActivateAccountResponse> {
     return await this.authService.requestActivateAccount(email);
   }

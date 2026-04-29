@@ -30,7 +30,7 @@ import { RequestType } from './schemas/email-request.schema';
 interface DataEmailSend {
   email: string;
   token: string;
-  firstName: string;
+  name: string;
 }
 
 const MAX_ATTEMPTS = 3;
@@ -43,11 +43,11 @@ interface EmailConfig {
 
 const EMAIL_CONFIGS: Record<TypeRequest, EmailConfig> = {
   recoverPassword: {
-    subject: 'Recuperar contraseña',
+    subject: 'Reset your password',
     template: recoverPassword,
   },
   activeAccount: {
-    subject: 'Activa tu cuenta',
+    subject: 'Activate your account',
     template: activateAccountTemplate,
   },
 };
@@ -60,7 +60,7 @@ export class EmailRequestService {
   ) {}
 
   async create(data: EmailRequestDto) {
-    const { email, type, expiresIn, firstName } = data;
+    const { email, type, expiresIn, name } = data;
 
     const token = this.generateToken();
 
@@ -82,7 +82,7 @@ export class EmailRequestService {
       $inc: { [`requests.${type}.attempts`]: 1 },
     };
 
-    await this.sendEmail(type, { email, token, firstName });
+    await this.sendEmail(type, { email, token, name });
 
     await this.emailRequestRepository.findOneAndUpdate({ email }, update, {
       new: true,

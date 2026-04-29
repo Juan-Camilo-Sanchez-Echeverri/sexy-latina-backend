@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
+  Put,
   Post,
   Query,
   UseGuards,
@@ -100,7 +100,7 @@ export class UsersController {
    *
    * <b>Users can only update their own user data through this endpoint.</b>
    */
-  @Patch(':id')
+  @Put(':id')
   @AllRoles()
   @UseGuards(OwnUserGuard)
   @ApiOkResponseWrapper(UserResponse, { isPaginate: false })
