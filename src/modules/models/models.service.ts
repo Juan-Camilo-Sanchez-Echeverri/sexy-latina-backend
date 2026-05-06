@@ -1,8 +1,17 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { Inject, forwardRef } from '@nestjs/common';
 
-import { PopulateOptions, PaginateResult, ClientSession, QueryFilter } from 'mongoose';
+import {
+  PopulateOptions,
+  PaginateResult,
+  ClientSession,
+  QueryFilter,
+} from 'mongoose';
 
 import { ICrudService } from '@common/interfaces';
 
@@ -92,30 +101,31 @@ export class ModelsService implements ICrudService<ModelDocument> {
   private async buildFilterData(
     params: FilterModelDto,
   ): Promise<QueryFilter<ModelDocument>> {
-    const filter: QueryFilter<ModelDocument> = { ...params.data };
+    const where: Record<string, unknown> = { ...params.data };
 
-    if (params.verified !== undefined) filter.verified = params.verified;
-    if (params.isActive !== undefined) (filter as any).isActive = params.isActive;
-    if (params.nationality) filter.nationality = params.nationality;
-    if (params.category) (filter as any).categories = params.category;
-    if (params.language) (filter as any).languages = params.language;
-    if (params.city) (filter as any).city = params.city;
-    if (params.state) (filter as any).state = params.state;
-    if (params.country) (filter as any).country = params.country;
+    if (params.verified !== undefined) where.verified = params.verified;
+    if (params.isActive !== undefined) where.isActive = params.isActive;
+    if (params.nationality) where.nationality = params.nationality;
+    if (params.category) where.categories = params.category;
+    if (params.language) where.languages = params.language;
+    if (params.city) where.city = params.city;
+    if (params.state) where.state = params.state;
+    if (params.country) where.country = params.country;
 
     if (params.minAge !== undefined || params.maxAge !== undefined) {
       const ageFilter: Record<string, number> = {};
+
       if (params.minAge !== undefined) ageFilter.$gte = params.minAge;
       if (params.maxAge !== undefined) ageFilter.$lte = params.maxAge;
-      (filter as any).age = ageFilter;
+      where.age = ageFilter;
     }
 
     if (params.name) {
       const userIds = await this.usersService.findIdsByName(params.name);
-      (filter as any).user = { $in: userIds };
+      where.user = { $in: userIds };
     }
 
-    return filter;
+    return where as QueryFilter<ModelDocument>;
   }
 
   async findOneById(id: string): Promise<ModelDocument> {
@@ -150,8 +160,21 @@ export class ModelsService implements ICrudService<ModelDocument> {
     }
 
     if (userUpdate) {
-      const userId = (updatedModel.user as any)?._id ?? updatedModel.user;
-      await this.usersService.update(userId.toString(), userUpdate);
+      const userField = updatedModel.user as unknown;
+      let userIdStr: string;
+
+      if (
+        userField &&
+        typeof userField === 'object' &&
+        '_id' in (userField as Record<string, unknown>)
+      ) {
+        const uid = (userField as Record<string, unknown>)['_id'];
+        userIdStr = typeof uid === 'string' ? uid : String(uid);
+      } else {
+        userIdStr = String(userField);
+      }
+
+      await this.usersService.update(userIdStr, userUpdate);
     }
 
     await this.cacheService.deleteByPrefix(ROOT_PREFIX_MODELS);

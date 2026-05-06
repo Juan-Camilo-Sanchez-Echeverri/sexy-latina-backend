@@ -63,7 +63,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     return response.status(status).json(responseBody);
   }
 
-  private resolveMessage(response: string | object, details: ValidationErrorDetails): string {
+  private resolveMessage(
+    response: string | object,
+    details: ValidationErrorDetails,
+  ): string {
     const firstField = Object.keys(details)[0];
     if (firstField) {
       return details[firstField][0];
@@ -100,7 +103,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const name = exception.constructor.name.replace(/Exception$/, '');
     if (name === 'Http') return 'internal-server-error';
-    return name.replace(/([A-Z])/g, (_, l, i) => (i > 0 ? '-' : '') + l.toLowerCase());
+    return name.replace(/([A-Z])/g, (_match: string, l: string, i: number) => {
+      return (i > 0 ? '-' : '') + l.toLowerCase();
+    });
   }
 
   private toKebab(str: string): string {
