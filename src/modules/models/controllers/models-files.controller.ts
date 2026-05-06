@@ -36,6 +36,7 @@ import { CreatePortfolioItemDto, UploadProfilePhotoDto } from '../dto';
 import { ModelsErrors } from '../errors/models.errors';
 
 import { ModelResponse } from '../responses';
+import { ModelDocument } from '../schemas/model.schema';
 
 @ApiBearerAuth()
 @ApiAuthResponses()
@@ -117,15 +118,19 @@ export class ModelsFilesController {
     @Param('id') id: string,
     @UploadedFiles() images?: Express.Multer.File[],
   ) {
-    if (!images?.length) throw new BadRequestException(ModelsErrors.IMAGE_FILE_REQUIRED);
+    if (!images?.length) {
+      throw new BadRequestException(ModelsErrors.IMAGE_FILE_REQUIRED);
+    }
 
     const folder = `uploads/models/${id}/portfolio`;
 
     const savedPaths = await Promise.all(
-      images.map((image) => this.storageService.saveFile(image, folder, 'local')),
+      images.map((image) =>
+        this.storageService.saveFile(image, folder, 'local'),
+      ),
     );
 
-    let model: any;
+    let model: ModelDocument | null = null;
     for (const url of savedPaths) {
       model = await this.modelsService.addPortafolioItem(id, { url });
     }

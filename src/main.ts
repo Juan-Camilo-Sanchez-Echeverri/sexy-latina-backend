@@ -69,7 +69,10 @@ async function bootstrap(): Promise<void> {
       exceptionFactory: (validationErrors): BadRequestException => {
         const details = getClassValidatorErrors(validationErrors);
 
-        return new BadRequestException({ message: 'Validation failed', details });
+        return new BadRequestException({
+          message: 'Validation failed',
+          details,
+        });
       },
     }),
   );

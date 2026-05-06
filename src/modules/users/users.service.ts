@@ -131,10 +131,7 @@ export class UsersService implements ICrudService<UserDocument> {
 
   async findIdsByName(name: string): Promise<string[]> {
     const regex = new RegExp(name, 'i');
-    const users = await this.usersRepository.find(
-      { name: regex },
-      { _id: 1 },
-    );
+    const users = await this.usersRepository.find({ name: regex }, { _id: 1 });
     return users.map((u) => u._id.toString());
   }
 

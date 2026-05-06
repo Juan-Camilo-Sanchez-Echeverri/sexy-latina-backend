@@ -1,6 +1,13 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 
-import { IsBoolean, IsEnum, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { CreateModelDto } from './create-model.dto';
@@ -25,7 +32,7 @@ export class UpdateModelDto extends PartialType(
   isActive?: boolean;
 
   @IsOptional()
-  @ValidateIf((o) => o.nationality !== null)
+  @ValidateIf((o: UpdateModelDto) => o.nationality !== null)
   @IsEnum(Nationality)
   nationality?: Nationality | null;
 

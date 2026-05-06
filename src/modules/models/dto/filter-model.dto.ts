@@ -1,6 +1,14 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsMongoId, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsMongoId,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 import { FilterDto } from '@common/dto';
 
@@ -40,7 +48,10 @@ export class FilterModelDto extends FilterDto<ModelDocument> {
 
   @IsOptional()
   @IsEnum(ModelCategory)
-  @ApiPropertyOptional({ enum: ModelCategory, description: 'Filter by category' })
+  @ApiPropertyOptional({
+    enum: ModelCategory,
+    description: 'Filter by category',
+  })
   category?: ModelCategory;
 
   @IsOptional()

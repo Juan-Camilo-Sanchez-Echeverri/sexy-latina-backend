@@ -5,7 +5,11 @@ import { AddressModule } from '@modules/address/address.module';
 import { UsersModule } from '@modules/users/users.module';
 import { ClientsModule } from '@modules/clients/clients.module';
 
-import { ModelsController, ModelsFilesController, PublicModelsController } from './controllers';
+import {
+  ModelsController,
+  ModelsFilesController,
+  PublicModelsController,
+} from './controllers';
 
 import { ModelsService } from './models.service';
 import { ModelsRepository } from './repositories/models.repository';
@@ -23,7 +27,11 @@ import { Model, ModelSchema } from './schemas/model.schema';
     UsersModule,
     forwardRef(() => ClientsModule),
   ],
-  controllers: [ModelsController, ModelsFilesController, PublicModelsController],
+  controllers: [
+    ModelsController,
+    ModelsFilesController,
+    PublicModelsController,
+  ],
   providers: [ModelsService, ModelsRepository],
   exports: [ModelsService],
 })
