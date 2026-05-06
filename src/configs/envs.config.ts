@@ -30,7 +30,7 @@ interface EnvVars {
   JWT_EXPIRATION: string;
 
   USER_NOTIFICATIONS: string;
-  EMAIL_SERVICE_URL: string;
+  PASSWORD_NOTIFICATIONS: string;
 
   REDIS_PASSWORD: string;
   REDIS_HOST: string;
@@ -62,9 +62,9 @@ const envSchema = joi
     JWT_EXPIRATION: joi.string().required(),
 
     USER_NOTIFICATIONS: joi.string().required(),
-    EMAIL_SERVICE_URL: joi.string().uri().required(),
+    PASSWORD_NOTIFICATIONS: joi.string().required(),
 
-    REDIS_PASSWORD: joi.string().allow('').optional(),
+    REDIS_PASSWORD: joi.string().required(),
     REDIS_HOST: joi.string().required(),
     REDIS_PORT: joi.number().required(),
 
@@ -105,7 +105,7 @@ export const envs = {
   jwtExpiration: envVars.JWT_EXPIRATION,
 
   userNotifications: envVars.USER_NOTIFICATIONS,
-  emailServiceUrl: envVars.EMAIL_SERVICE_URL,
+  passwordNotifications: envVars.PASSWORD_NOTIFICATIONS,
 
   redisPassword: envVars.REDIS_PASSWORD,
   redisHost: envVars.REDIS_HOST,

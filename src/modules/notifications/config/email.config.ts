@@ -1,6 +1,12 @@
 import { envs } from '@configs';
 
 export const emailConfig = {
-  url: envs.emailServiceUrl,
-  from: envs.userNotifications,
+  smtp: {
+    host: 'smtp.gmail.com',
+    secure: true,
+    auth: {
+      user: envs.userNotifications,
+      pass: envs.passwordNotifications,
+    },
+  },
 };
