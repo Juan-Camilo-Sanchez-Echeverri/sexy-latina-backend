@@ -7,7 +7,6 @@
 - **Caché:** Redis
 - **Autenticación:** JWT
 - **Documentación API:** Swagger
-- **Inteligencia Artificial:** OpenAI
 - **Almacenamiento:** Sistema de archivos local
 
 ## Requerimientos
@@ -129,6 +128,293 @@ Cree los archivos de entorno necesarios en la raíz del proyecto y añada las va
 
 Edite los archivos `.env.local`, `.env.development` y `.env` con sus configuraciones.
 
+## Explicación de Variables de Entorno
+
+## `PORT`
+
+Puerto donde correrá el backend NestJS.
+
+### Ejemplo
+
+```env
+PORT=3000
+```
+
+## `NODE_ENV`
+
+Entorno de ejecución de Node.js.
+
+### Valores válidos
+
+```env
+NODE_ENV=local
+NODE_ENV=development
+NODE_ENV=production
+```
+
+### Recomendación
+
+- Local → `local`
+- Desarrollo → `development`
+- Producción → `production`
+
+## `DB_URL`
+
+Cadena de conexión de MongoDB.
+
+## Opción 1: MongoDB Local
+
+```env
+DB_URL=mongodb://localhost:27017/sexy-latina
+```
+
+## Opción 2: MongoDB Replica Set con Docker
+
+```env
+DB_URL=mongodb://mongodb-primary:27017/sexy-latina?replicaSet=rs0
+```
+
+## Opción 3: MongoDB Atlas
+
+Registro:
+https://www.mongodb.com/cloud/atlas/register
+
+Documentación:
+https://www.mongodb.com/docs/atlas/connect-to-database-deployment/
+
+### Pasos
+
+1. Crear cuenta
+2. Crear cluster
+3. Ir a:
+
+```text
+Connect -> Drivers
+```
+
+4. Copiar el connection string
+
+### Ejemplo
+
+```env
+DB_URL=mongodb+srv://USER:PASSWORD@cluster.mongodb.net/sexy-latina
+```
+
+## `FRONT_PUBLIC_URL`
+
+URL pública del frontend.
+
+### Local
+
+```env
+FRONT_PUBLIC_URL=http://localhost:4200
+```
+
+### Producción
+
+```env
+FRONT_PUBLIC_URL=https://sexylatina.co
+```
+
+## `ALLOWED_ORIGINS`
+
+Dominios permitidos para consumir la API.
+
+Separados por coma.
+
+### Ejemplo local
+
+```env
+ALLOWED_ORIGINS=http://localhost:4200
+```
+
+### Ejemplo múltiples dominios
+
+```env
+ALLOWED_ORIGINS=http://localhost:4200,https://sexylatina.co,https://admin.sexylatina.co
+```
+
+## `DISCORD_WEBHOOK_URL`
+
+Webhook de Discord usado para logs y notificaciones.
+
+## Cómo obtenerlo
+
+Documentación oficial:
+https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
+
+### Pasos
+
+1. Entrar a Discord
+2. Configuración del canal
+3. Integraciones
+4. Webhooks
+5. Crear Webhook
+6. Copiar URL
+
+## Ejemplo
+
+```env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/xxxxx/yyyyy
+```
+
+## `USER_NOTIFICATIONS`
+
+Correo usado para enviar emails.
+
+Ejemplo:
+
+```env
+USER_NOTIFICATIONS=myapp@gmail.com
+```
+
+## `PASSWORD_NOTIFICATIONS`
+
+Contraseña o App Password del correo.
+
+## Recomendación Gmail
+
+Usar:
+
+- Verificación en dos pasos
+- App Password
+
+NO usar la contraseña principal de la cuenta.
+
+## Crear App Password Gmail
+
+https://support.google.com/accounts/answer/185833
+
+Ejemplo:
+
+```env
+PASSWORD_NOTIFICATIONS=abcd efgh ijkl mnop
+```
+
+## `REDIS_HOST`
+
+Host del servidor Redis.
+
+### Local
+
+```env
+REDIS_HOST=localhost
+```
+
+### Docker
+
+```env
+REDIS_HOST=redis
+```
+
+## `REDIS_PORT`
+
+Puerto Redis.
+
+### Valor por defecto
+
+```env
+REDIS_PORT=6379
+```
+
+## `REDIS_PASSWORD`
+
+Contraseña Redis.
+
+Si Redis no tiene contraseña:
+
+```env
+REDIS_PASSWORD=
+```
+
+## `REDIS_ADMIN_USER`
+
+Usuario para Redis Commander.
+
+```env
+REDIS_ADMIN_USER=admin
+```
+
+## `REDIS_ADMIN_PASSWORD`
+
+Contraseña para Redis Commander.
+
+Ejemplo:
+
+```env
+REDIS_ADMIN_PASSWORD=admin123
+```
+
+### `DEFAULT_USER_NAME`
+
+Nombre completo del administrador por defecto.
+
+Ejemplo:
+
+```env
+DEFAULT_USER_NAME=Super Admin
+```
+
+## `DEFAULT_USER_PHONE`
+
+Número de teléfono del administrador inicial.
+
+Ejemplo:
+
+```env
+DEFAULT_USER_PHONE=3001234567
+```
+
+## `DEFAULT_USER_DOCUMENT`
+
+Número de documento del administrador inicial.
+
+Ejemplo:
+
+```env
+DEFAULT_USER_DOCUMENT=123456789
+```
+
+## `DEFAULT_USER_DOCUMENT_TYPE`
+
+Tipo de documento del administrador inicial.
+
+Valores comunes:
+
+```env
+DEFAULT_USER_DOCUMENT_TYPE=CC
+DEFAULT_USER_DOCUMENT_TYPE=CE
+DEFAULT_USER_DOCUMENT_TYPE=PASSPORT
+```
+
+## `DEFAULT_USER_EMAIL`
+
+Correo electrónico del administrador inicial.
+
+Este correo será utilizado para iniciar sesión en la plataforma.
+
+Ejemplo:
+
+```env
+DEFAULT_USER_EMAIL=admin@sexylatina.co
+```
+
+## `DEFAULT_USER_PASSWORD`
+
+Contraseña del administrador inicial.
+
+Recomendaciones:
+
+- Usar una contraseña segura
+- Cambiarla después del primer inicio de sesión
+- No compartirla públicamente
+
+Ejemplo:
+
+```env
+DEFAULT_USER_PASSWORD=Admin123*
+```
+
 ## Ejecutar en Local
 
 Para iniciar el servidor en la máquina local, ejecute:
@@ -176,12 +462,12 @@ npm run start:docker:dev
 
 Esto levanta los siguientes servicios:
 
-| Servicio         | Contenedor           | Puerto externo             |
-| ---------------- | -------------------- | -------------------------- |
-| Backend (NestJS) | backend-dev          | `${PORT}`                  |
-| MongoDB 4.4      | mongodb-primary-dev  | — (solo red interna)       |
-| Redis            | redis-dev            | `${REDIS_PORT}`            |
-| Redis Commander  | redis-commander-dev  | 8082                       |
+| Servicio         | Contenedor          | Puerto externo       |
+| ---------------- | ------------------- | -------------------- |
+| Backend (NestJS) | backend-dev         | `${PORT}`            |
+| MongoDB 4.4      | mongodb-primary-dev | — (solo red interna) |
+| Redis            | redis-dev           | `${REDIS_PORT}`      |
+| Redis Commander  | redis-commander-dev | 8082                 |
 
 > Los datos de MongoDB y Redis se persisten en las carpetas `mongo-dev/` y `redis-dev/` respectivamente, en la raíz del proyecto.
 
@@ -354,3 +640,11 @@ Una vez que la aplicación esté corriendo, puedes acceder a la documentación i
 
 ```
 http://localhost:<PORT>/docs
+
+
+
+```
+
+```
+
+```
