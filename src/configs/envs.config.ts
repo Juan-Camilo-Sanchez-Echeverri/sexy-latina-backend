@@ -21,7 +21,6 @@ interface EnvVars {
   NODE_ENV: ExecModes;
 
   DB_URL: string;
-  APP_URL: string;
   FRONT_PUBLIC_URL: string;
   ALLOWED_ORIGINS: string[];
   DISCORD_WEBHOOK_URL: string;
@@ -54,7 +53,6 @@ const envSchema = joi
 
     DB_URL: joi.string().required(),
     DISCORD_WEBHOOK_URL: joi.string().uri().required(),
-    APP_URL: joi.string().uri().required(),
     FRONT_PUBLIC_URL: joi.string().uri().required(),
     ALLOWED_ORIGINS: joi.array().items(joi.string().uri()).required(),
 
@@ -97,7 +95,6 @@ export const envs = {
 
   dbUrl: envVars.DB_URL,
   discordWebhookUrl: envVars.DISCORD_WEBHOOK_URL,
-  appUrl: envVars.APP_URL,
   frontPublicUrl: envVars.FRONT_PUBLIC_URL,
   allowedOrigins: envVars.ALLOWED_ORIGINS,
 
